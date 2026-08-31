@@ -127,6 +127,7 @@ export default function Home() {
         id="about"
         className="min-h-[650px] flex items-center"
       >
+
         <div className="max-w-6xl mx-auto px-6 w-full">
 
           <div className="text-center max-w-4xl mx-auto">
@@ -148,6 +149,7 @@ export default function Home() {
             {/* Buttons */}
             <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
 
+              {/* View Projects */}
               <a
                 href="#projects"
                 className="
@@ -167,29 +169,30 @@ export default function Home() {
                 View Projects
               </a>
 
-              {/* DOWNLOAD RESUME */}
+              {/* Download Resume */}
               <a
-  href="/resume.pdf"
-  download="Minhal_Rahman_Resume.pdf"
-  className="
-    w-full
-    sm:w-auto
-    border
-    border-[#DDD]
-    px-8
-    py-4
-    rounded-full
-    text-[14px]
-    font-medium
-    hover:border-[#111]
-    transition
-    inline-flex
-    items-center
-    justify-center
-  "
->
-  Download Resume
-</a>
+                href="/resume.pdf"
+                download
+                className="
+                  w-full
+                  sm:w-auto
+                  border
+                  border-[#DDD]
+                  px-8
+                  py-4
+                  rounded-full
+                  text-[14px]
+                  font-medium
+                  hover:border-[#111]
+                  transition
+                  inline-flex
+                  items-center
+                  justify-center
+                "
+              >
+                Download Resume
+              </a>
+
             </div>
 
           </div>
@@ -230,6 +233,7 @@ export default function Home() {
           >
 
             <div className="aspect-[16/10] overflow-hidden bg-[#F2F2ED]">
+
               <img
                 src="/images/liquid-mixer-prototype.jpg"
                 alt="Smart Industrial Liquid Mixer"
@@ -242,6 +246,7 @@ export default function Home() {
                   duration-500
                 "
               />
+
             </div>
 
             <div className="p-7">
