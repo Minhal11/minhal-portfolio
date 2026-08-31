@@ -28,48 +28,96 @@ export default function Home() {
   }, []);
 
   /*
-    Header animation
-    ----------------
-    0   = top of page
-    1   = fully collapsed header
+    Scroll-linked header animation
+    --------------------------------
+    At the top:
+      Portfolio is visible
+      Navigation sits below it
+
+    As the page scrolls:
+      Portfolio moves upward + fades
+      Navigation moves upward into its place
   */
+
   const collapseProgress = Math.min(scrollY / 140, 1);
 
-  // Portfolio moves upward and gradually disappears.
   const portfolioY = -(collapseProgress * 54);
   const portfolioOpacity = 1 - collapseProgress;
 
-  // Navigation moves upward into the Portfolio position.
   const navigationY = -(collapseProgress * 47);
 
-  // Header gets slightly shorter as it collapses.
   const headerHeight = 118 - collapseProgress * 42;
+
+  /*
+    Smooth section scrolling
+    --------------------------------
+    Keeps the destination below the fixed header.
+  */
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id);
+
+    if (!element) return;
+
+    if (id === "about") {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+
+      return;
+    }
+
+    const headerOffset = 82;
+
+    const elementPosition =
+      element.getBoundingClientRect().top + window.scrollY;
+
+    const offsetPosition = Math.max(
+      elementPosition - headerOffset,
+      0
+    );
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  };
 
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
       {/* =========================================================
-          COLLAPSING FIXED HEADER
+          FIXED HEADER
+          Minimal / futuristic / no divider / no blur
       ========================================================= */}
       <header
-        className="fixed top-0 left-0 right-0 z-50 w-full bg-[#F8F8F5]/95 backdrop-blur-sm border-b border-[#EAEAE5]/70"
+        className="
+          fixed
+          top-0
+          left-0
+          right-0
+          z-50
+          w-full
+          bg-[#F8F8F5]
+        "
         style={{
           height: `${headerHeight}px`,
         }}
       >
 
-        {/* Main top row */}
+        {/* Top row */}
         <div className="max-w-6xl mx-auto h-[68px] px-4 sm:px-6 md:px-8">
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full">
 
-            {/* ===================================================
+            {/* =================================================
                 NAME
-                Stays fixed in position
-            =================================================== */}
+                ================================================= */}
             <div className="justify-self-start min-w-0">
-              <Link
-                href="/"
+
+              <button
+                type="button"
+                onClick={() => scrollToSection("about")}
                 className="
                   text-[14px]
                   sm:text-[15px]
@@ -77,17 +125,19 @@ export default function Home() {
                   font-semibold
                   tracking-tight
                   whitespace-nowrap
+                  hover:text-[#555]
+                  transition-colors
                 "
               >
                 Minhal Rahman
-              </Link>
+              </button>
+
             </div>
 
 
-            {/* ===================================================
+            {/* =================================================
                 PORTFOLIO
-                Moves upward with scroll
-            =================================================== */}
+                ================================================= */}
             <div
               className="justify-self-center will-change-transform"
               style={{
@@ -95,8 +145,10 @@ export default function Home() {
                 opacity: portfolioOpacity,
               }}
             >
-              <Link
-                href="/"
+
+              <button
+                type="button"
+                onClick={() => scrollToSection("about")}
                 className="
                   text-[24px]
                   sm:text-[28px]
@@ -107,14 +159,14 @@ export default function Home() {
                 "
               >
                 Portfolio<span className="text-[#F4B400]">.</span>
-              </Link>
+              </button>
+
             </div>
 
 
-            {/* ===================================================
+            {/* =================================================
                 SOCIAL ICONS
-                Stay fixed in position
-            =================================================== */}
+                ================================================= */}
             <div className="justify-self-end flex items-center gap-3 sm:gap-5 md:gap-7">
 
               {/* GitHub */}
@@ -123,7 +175,11 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="text-[#555] hover:text-[#111] transition"
+                className="
+                  text-[#555]
+                  hover:text-[#111]
+                  transition-colors
+                "
               >
                 <svg
                   width="19"
@@ -142,7 +198,11 @@ export default function Home() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="text-[#555] hover:text-[#111] transition"
+                className="
+                  text-[#555]
+                  hover:text-[#111]
+                  transition-colors
+                "
               >
                 <svg
                   width="19"
@@ -159,7 +219,11 @@ export default function Home() {
               <a
                 href="mailto:minhalrahman21@gmail.com"
                 aria-label="Email"
-                className="text-[#555] hover:text-[#111] transition"
+                className="
+                  text-[#555]
+                  hover:text-[#111]
+                  transition-colors
+                "
               >
                 <svg
                   width="20"
@@ -177,13 +241,14 @@ export default function Home() {
               </a>
 
             </div>
+
           </div>
         </div>
 
 
         {/* =========================================================
             NAVIGATION
-            Starts underneath Portfolio and moves upward
+            Moves into Portfolio's position as you scroll
         ========================================================= */}
         <nav
           className="
@@ -213,8 +278,9 @@ export default function Home() {
           >
 
             {/* About */}
-            <a
-              href="#about"
+            <button
+              type="button"
+              onClick={() => scrollToSection("about")}
               className="
                 relative
                 text-[12px]
@@ -227,44 +293,56 @@ export default function Home() {
             >
               About
 
-              <span className="absolute left-0 bottom-0 w-5 sm:w-6 h-[2px] bg-[#F4B400]" />
-            </a>
+              <span
+                className="
+                  absolute
+                  left-0
+                  bottom-0
+                  w-5
+                  sm:w-6
+                  h-[2px]
+                  bg-[#F4B400]
+                "
+              />
+            </button>
 
 
             {/* Projects */}
-            <a
-              href="#projects"
+            <button
+              type="button"
+              onClick={() => scrollToSection("projects")}
               className="
                 text-[12px]
                 sm:text-[14px]
                 md:text-[16px]
                 text-gray-500
                 hover:text-[#111]
-                transition
+                transition-colors
                 pb-2
                 whitespace-nowrap
               "
             >
               Projects
-            </a>
+            </button>
 
 
             {/* Education */}
-            <a
-              href="#education"
+            <button
+              type="button"
+              onClick={() => scrollToSection("education")}
               className="
                 text-[12px]
                 sm:text-[14px]
                 md:text-[16px]
                 text-gray-500
                 hover:text-[#111]
-                transition
+                transition-colors
                 pb-2
                 whitespace-nowrap
               "
             >
               Education
-            </a>
+            </button>
 
           </div>
         </nav>
@@ -285,6 +363,7 @@ export default function Home() {
           sm:pt-[160px]
           md:pt-[175px]
           pb-20
+          scroll-mt-[80px]
         "
       >
 
@@ -347,11 +426,25 @@ export default function Home() {
 
 
             {/* Buttons */}
-            <div className="mt-9 sm:mt-10 flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 px-2 sm:px-0">
+            <div
+              className="
+                mt-9
+                sm:mt-10
+                flex
+                flex-col
+                sm:flex-row
+                justify-center
+                gap-3
+                sm:gap-4
+                px-2
+                sm:px-0
+              "
+            >
 
               {/* View Projects */}
-              <a
-                href="#projects"
+              <button
+                type="button"
+                onClick={() => scrollToSection("projects")}
                 className="
                   w-full
                   sm:w-auto
@@ -363,14 +456,11 @@ export default function Home() {
                   text-[14px]
                   font-medium
                   hover:bg-[#2a2a2a]
-                  transition
-                  inline-flex
-                  items-center
-                  justify-center
+                  transition-colors
                 "
               >
                 View Projects
-              </a>
+              </button>
 
 
               {/* Download Resume */}
@@ -388,7 +478,7 @@ export default function Home() {
                   text-[14px]
                   font-medium
                   hover:border-[#111]
-                  transition
+                  transition-colors
                   inline-flex
                   items-center
                   justify-center
@@ -400,8 +490,8 @@ export default function Home() {
             </div>
 
           </div>
-
         </div>
+
       </section>
 
 
@@ -410,7 +500,15 @@ export default function Home() {
       ========================================================= */}
       <section
         id="projects"
-        className="max-w-6xl mx-auto px-5 sm:px-6 py-20 sm:py-24"
+        className="
+          max-w-6xl
+          mx-auto
+          px-5
+          sm:px-6
+          py-20
+          sm:py-24
+          scroll-mt-[80px]
+        "
       >
 
         <p className="text-[11px] sm:text-[12px] tracking-[3px] sm:tracking-[4px] text-gray-400 uppercase">
@@ -425,7 +523,9 @@ export default function Home() {
 
         <div className="mt-10 sm:mt-12 grid md:grid-cols-2 gap-6 sm:gap-8">
 
-          {/* Liquid Mixer */}
+          {/* =====================================================
+              LIQUID MIXER
+          ===================================================== */}
           <Link
             href="/projects/liquid-mixer"
             className="
@@ -436,7 +536,8 @@ export default function Home() {
               bg-white
               overflow-hidden
               hover:-translate-y-1
-              transition
+              transition-transform
+              duration-300
             "
           >
 
@@ -450,7 +551,7 @@ export default function Home() {
                   h-full
                   object-cover
                   group-hover:scale-[1.03]
-                  transition
+                  transition-transform
                   duration-500
                 "
               />
@@ -497,7 +598,9 @@ export default function Home() {
           </Link>
 
 
-          {/* Placeholder / Second Project */}
+          {/* =====================================================
+              SECOND PROJECT
+          ===================================================== */}
           <div
             className="
               rounded-3xl
@@ -543,7 +646,12 @@ export default function Home() {
       ========================================================= */}
       <section
         id="education"
-        className="bg-white border-t border-[#EAEAE5]"
+        className="
+          bg-white
+          border-t
+          border-[#EAEAE5]
+          scroll-mt-[80px]
+        "
       >
 
         <div className="max-w-6xl mx-auto px-5 sm:px-6 py-20 sm:py-24">
