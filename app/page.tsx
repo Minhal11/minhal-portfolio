@@ -175,28 +175,37 @@ export default function Home() {
 
      Instead of computing "left" as a percentage of the nav
      container (which drifts out of sync with the container's
-     fixed pixel width across breakpoints and causes the
-     horizontal glitch), we measure the actual rendered
-     center of the active button and animate a single
-     `translateX` transform. This is GPU-accelerated, pixel
-     accurate at every breakpoint, and always lands exactly
-     under the active label - including Education.
+     fixed pixel width across breakpoints), we measure the
+     actual rendered center of the *target* button and animate
+     a single `translateX` transform. This is GPU-accelerated,
+     pixel accurate at every breakpoint, and always lands
+     exactly under the target label - including Education.
+
+     "Target" is whichever button is currently hovered; if none
+     is hovered, it falls back to the active (clicked) section.
+     This gives the classic "cursor-following" underline: it
+     glides to whatever you hover, and snaps back to - and
+     stays locked on - whatever you last clicked once your
+     mouse leaves the nav.
   ========================================================= */
 
   const navContainerRef = useRef<HTMLDivElement>(null);
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [underlineX, setUnderlineX] = useState(0);
   const [underlineReady, setUnderlineReady] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  const targetIndex = hoveredIndex ?? activeIndex;
 
   useEffect(() => {
     const measure = () => {
       const container = navContainerRef.current;
-      const activeButton = buttonRefs.current[activeIndex];
+      const targetButton = buttonRefs.current[targetIndex];
 
-      if (!container || !activeButton) return;
+      if (!container || !targetButton) return;
 
       const containerRect = container.getBoundingClientRect();
-      const buttonRect = activeButton.getBoundingClientRect();
+      const buttonRect = targetButton.getBoundingClientRect();
 
       const centerX =
         buttonRect.left -
@@ -218,7 +227,7 @@ export default function Home() {
       window.cancelAnimationFrame(raf);
       window.removeEventListener("resize", measure);
     };
-  }, [activeIndex]);
+  }, [targetIndex]);
 
 
   return (
@@ -495,6 +504,12 @@ export default function Home() {
                   onClick={() =>
                     scrollToSection(item.id)
                   }
+                  onMouseEnter={() =>
+                    setHoveredIndex(index)
+                  }
+                  onMouseLeave={() =>
+                    setHoveredIndex(null)
+                  }
                   className={`
                     h-8
                     flex
@@ -544,7 +559,7 @@ export default function Home() {
                 bg-[#F4B400]
                 will-change-transform
                 transition-transform
-                duration-500
+                duration-300
                 ease-[cubic-bezier(0.22,1,0.36,1)]
               "
               style={{
