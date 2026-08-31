@@ -17,6 +17,7 @@ export default function Home() {
   /* =========================================================
      SCROLL POSITION
   ========================================================= */
+
   useEffect(() => {
     let ticking = false;
 
@@ -43,9 +44,8 @@ export default function Home() {
 
   /* =========================================================
      ACTIVE SECTION DETECTION
-     Uses IntersectionObserver so the active nav item follows
-     the section currently entering the viewing area.
   ========================================================= */
+
   useEffect(() => {
     const sections = navItems
       .map((item) => document.getElementById(item.id))
@@ -55,20 +55,21 @@ export default function Home() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visibleEntries = entries
+        const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort(
             (a, b) =>
-              a.boundingClientRect.top - b.boundingClientRect.top
+              a.boundingClientRect.top -
+              b.boundingClientRect.top
           );
 
-        if (visibleEntries.length > 0) {
-          setActiveSection(visibleEntries[0].target.id);
+        if (visible.length > 0) {
+          setActiveSection(visible[0].target.id);
         }
       },
       {
         root: null,
-        rootMargin: "-110px 0px -50% 0px",
+        rootMargin: "-120px 0px -50% 0px",
         threshold: 0,
       }
     );
@@ -82,21 +83,37 @@ export default function Home() {
 
 
   /* =========================================================
-     SCROLL-LINKED HEADER ANIMATION
+     HEADER COLLAPSE
+     
+     IMPORTANT:
+     The header height itself NEVER changes.
+     Only Portfolio + Navigation move internally.
+     This removes the About <-> Projects vertical jump.
   ========================================================= */
 
   const collapseProgress = Math.min(scrollY / 140, 1);
 
+  /*
+    Portfolio:
+    starts in the center of the upper header area
+    and moves upward out of view.
+  */
   const portfolioY = -(collapseProgress * 54);
-  const portfolioOpacity = 1 - collapseProgress;
 
+  const portfolioOpacity =
+    1 - collapseProgress;
+
+
+  /*
+    Navigation:
+    starts below Portfolio and moves upward into
+    the Portfolio position.
+  */
   const navigationY = -(collapseProgress * 47);
-
-  const headerHeight = 118 - collapseProgress * 42;
 
 
   /* =========================================================
-     SMOOTH SECTION SCROLL
+     SMOOTH NAVIGATION
   ========================================================= */
 
   const scrollToSection = (id: string) => {
@@ -120,7 +137,8 @@ export default function Home() {
     const headerOffset = 82;
 
     const elementPosition =
-      element.getBoundingClientRect().top + window.scrollY;
+      element.getBoundingClientRect().top +
+      window.scrollY;
 
     const offsetPosition = Math.max(
       elementPosition - headerOffset,
@@ -137,9 +155,14 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
-      {/* =====================================================
+      {/* =========================================================
           FIXED HEADER
-      ===================================================== */}
+          
+          Constant height.
+          No border.
+          No blur.
+      ========================================================= */}
+
       <header
         className="
           fixed
@@ -151,20 +174,39 @@ export default function Home() {
           bg-[#F8F8F5]
         "
         style={{
-          height: `${headerHeight}px`,
+          height: "118px",
         }}
       >
 
-        {/* ===================================================
+        {/* =====================================================
             TOP ROW
-        =================================================== */}
-        <div className="max-w-6xl mx-auto h-[68px] px-4 sm:px-6 md:px-8">
+        ===================================================== */}
 
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full">
+        <div
+          className="
+            max-w-6xl
+            mx-auto
+            h-[68px]
+            px-4
+            sm:px-6
+            md:px-8
+          "
+        >
+
+          <div
+            className="
+              grid
+              grid-cols-[1fr_auto_1fr]
+              items-center
+              h-full
+            "
+          >
 
             {/* =================================================
                 NAME
+                ALWAYS STATIONARY
             ================================================= */}
+
             <div className="justify-self-start min-w-0">
 
               <button
@@ -190,10 +232,12 @@ export default function Home() {
             {/* =================================================
                 PORTFOLIO
             ================================================= */}
+
             <div
               className="
                 justify-self-center
                 will-change-transform
+                pointer-events-auto
               "
               style={{
                 transform: `translateY(${portfolioY}px)`,
@@ -221,8 +265,19 @@ export default function Home() {
 
             {/* =================================================
                 SOCIAL ICONS
+                ALWAYS STATIONARY
             ================================================= */}
-            <div className="justify-self-end flex items-center gap-3 sm:gap-5 md:gap-7">
+
+            <div
+              className="
+                justify-self-end
+                flex
+                items-center
+                gap-3
+                sm:gap-5
+                md:gap-7
+              "
+            >
 
               {/* GitHub */}
               <a
@@ -242,7 +297,7 @@ export default function Home() {
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
-                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47-.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
                 </svg>
               </a>
 
@@ -310,8 +365,8 @@ export default function Home() {
 
         {/* =====================================================
             NAVIGATION
-            Shared animated underline
         ===================================================== */}
+
         <nav
           className="
             absolute
@@ -340,13 +395,16 @@ export default function Home() {
           >
 
             {navItems.map((item) => {
-              const isActive = activeSection === item.id;
+              const isActive =
+                activeSection === item.id;
 
               return (
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => scrollToSection(item.id)}
+                  onClick={() =>
+                    scrollToSection(item.id)
+                  }
                   className={`
                     relative
                     pb-2
@@ -363,8 +421,10 @@ export default function Home() {
                     }
                   `}
                 >
+
                   {item.label}
 
+                  {/* Shared moving underline */}
                   {isActive && (
                     <motion.span
                       layoutId="active-navigation-underline"
@@ -380,12 +440,13 @@ export default function Home() {
                       "
                       transition={{
                         type: "spring",
-                        stiffness: 500,
-                        damping: 38,
+                        stiffness: 480,
+                        damping: 34,
                         mass: 0.55,
                       }}
                     />
                   )}
+
                 </button>
               );
             })}
@@ -397,9 +458,10 @@ export default function Home() {
       </header>
 
 
-      {/* =====================================================
+      {/* =========================================================
           HERO
-      ===================================================== */}
+      ========================================================= */}
+
       <section
         id="about"
         className="
@@ -491,7 +553,9 @@ export default function Home() {
               {/* View Projects */}
               <button
                 type="button"
-                onClick={() => scrollToSection("projects")}
+                onClick={() =>
+                  scrollToSection("projects")
+                }
                 className="
                   w-full
                   sm:w-auto
@@ -543,9 +607,10 @@ export default function Home() {
       </section>
 
 
-      {/* =====================================================
+      {/* =========================================================
           PROJECTS
-      ===================================================== */}
+      ========================================================= */}
+
       <section
         id="projects"
         className="
@@ -559,7 +624,16 @@ export default function Home() {
         "
       >
 
-        <p className="text-[11px] sm:text-[12px] tracking-[3px] sm:tracking-[4px] text-gray-400 uppercase">
+        <p
+          className="
+            text-[11px]
+            sm:text-[12px]
+            tracking-[3px]
+            sm:tracking-[4px]
+            text-gray-400
+            uppercase
+          "
+        >
           Selected Works
         </p>
 
@@ -569,7 +643,16 @@ export default function Home() {
         </h2>
 
 
-        <div className="mt-10 sm:mt-12 grid md:grid-cols-2 gap-6 sm:gap-8">
+        <div
+          className="
+            mt-10
+            sm:mt-12
+            grid
+            md:grid-cols-2
+            gap-6
+            sm:gap-8
+          "
+        >
 
           {/* Liquid Mixer */}
           <Link
@@ -607,7 +690,16 @@ export default function Home() {
 
             <div className="p-6 sm:p-7">
 
-              <p className="text-[11px] sm:text-xs uppercase tracking-[2px] sm:tracking-[3px] text-gray-400">
+              <p
+                className="
+                  text-[11px]
+                  sm:text-xs
+                  uppercase
+                  tracking-[2px]
+                  sm:tracking-[3px]
+                  text-gray-400
+                "
+              >
                 Automation &amp; Instrumentation
               </p>
 
@@ -617,7 +709,15 @@ export default function Home() {
               </h3>
 
 
-              <p className="mt-3 text-sm sm:text-base text-gray-500 leading-7">
+              <p
+                className="
+                  mt-3
+                  text-sm
+                  sm:text-base
+                  text-gray-500
+                  leading-7
+                "
+              >
                 Recipe-based liquid dosing and mixing system developed using
                 LabVIEW, ESP32 and a web dashboard.
               </p>
@@ -685,9 +785,10 @@ export default function Home() {
       </section>
 
 
-      {/* =====================================================
+      {/* =========================================================
           EDUCATION
-      ===================================================== */}
+      ========================================================= */}
+
       <section
         id="education"
         className="
@@ -698,9 +799,27 @@ export default function Home() {
         "
       >
 
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 py-20 sm:py-24">
+        <div
+          className="
+            max-w-6xl
+            mx-auto
+            px-5
+            sm:px-6
+            py-20
+            sm:py-24
+          "
+        >
 
-          <p className="text-[11px] sm:text-[12px] tracking-[3px] sm:tracking-[4px] text-gray-400 uppercase">
+          <p
+            className="
+              text-[11px]
+              sm:text-[12px]
+              tracking-[3px]
+              sm:tracking-[4px]
+              text-gray-400
+              uppercase
+            "
+          >
             Academic Background
           </p>
 
@@ -724,7 +843,15 @@ export default function Home() {
               </h3>
 
 
-              <p className="mt-2 text-sm sm:text-base text-gray-500 leading-7">
+              <p
+                className="
+                  mt-2
+                  text-sm
+                  sm:text-base
+                  text-gray-500
+                  leading-7
+                "
+              >
                 Focused on industrial automation, control systems,
                 instrumentation and process engineering.
               </p>
@@ -738,12 +865,30 @@ export default function Home() {
       </section>
 
 
-      {/* =====================================================
+      {/* =========================================================
           FOOTER
-      ===================================================== */}
-      <footer className="max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-12">
+      ========================================================= */}
 
-        <div className="flex flex-col sm:flex-row justify-between gap-6">
+      <footer
+        className="
+          max-w-6xl
+          mx-auto
+          px-5
+          sm:px-6
+          py-10
+          sm:py-12
+        "
+      >
+
+        <div
+          className="
+            flex
+            flex-col
+            sm:flex-row
+            justify-between
+            gap-6
+          "
+        >
 
           <p className="text-sm text-gray-400">
             © 2026 Minhal Rahman
@@ -756,7 +901,12 @@ export default function Home() {
               href="https://github.com/Minhal11"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-gray-400 hover:text-[#111] transition"
+              className="
+                text-sm
+                text-gray-400
+                hover:text-[#111]
+                transition
+              "
             >
               GitHub
             </a>
@@ -766,7 +916,12 @@ export default function Home() {
               href="https://www.linkedin.com/in/minhal-rahman/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm text-gray-400 hover:text-[#111] transition"
+              className="
+                text-sm
+                text-gray-400
+                hover:text-[#111]
+                transition
+              "
             >
               LinkedIn
             </a>
@@ -774,7 +929,12 @@ export default function Home() {
 
             <a
               href="mailto:minhalrahman21@gmail.com"
-              className="text-sm text-gray-400 hover:text-[#111] transition"
+              className="
+                text-sm
+                text-gray-400
+                hover:text-[#111]
+                transition
+              "
             >
               Email
             </a>
