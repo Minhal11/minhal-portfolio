@@ -171,7 +171,7 @@ export default function Home() {
 
               {/* Download Resume */}
               <a
-                href="/resume.pdf"
+                href="/Minhal_Rahman_Resume.pdf"
                 download
                 className="
                   w-full
