@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 const navItems = [
   { id: "about", label: "About" },
@@ -12,62 +12,7 @@ const navItems = [
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [activeSection, setActiveSection] = useState("about");
-
-  /*
-    ---------------------------------------------------------
-    HOVER STATE
-
-    The yellow line follows the hovered item while the
-    pointer is over the navigation.
-
-    When the pointer leaves, it returns to activeSection.
-    ---------------------------------------------------------
-  */
-  const [hoveredSection, setHoveredSection] =
-    useState<string | null>(null);
-
-  /*
-    ---------------------------------------------------------
-    NAVIGATION REFERENCES
-    ---------------------------------------------------------
-  */
-  const navContainerRef =
-    useRef<HTMLDivElement>(null);
-
-  const buttonRefs =
-    useRef<(HTMLButtonElement | null)[]>([]);
-
-  /*
-    ---------------------------------------------------------
-    UNDERLINE POSITION
-    ---------------------------------------------------------
-  */
-  const [underlineX, setUnderlineX] =
-    useState(0);
-
-  const [underlineWidth, setUnderlineWidth] =
-    useState(24);
-
-  const [underlineReady, setUnderlineReady] =
-    useState(false);
-
-  /*
-    ---------------------------------------------------------
-    Which item should the line currently follow?
-    
-    Hover takes priority.
-    Otherwise active section is used.
-    ---------------------------------------------------------
-  */
-  const indicatorSection =
-    hoveredSection ?? activeSection;
-
-  const indicatorIndex = Math.max(
-    navItems.findIndex(
-      (item) => item.id === indicatorSection
-    ),
-    0
-  );
+  const [hoveredSection, setHoveredSection] = useState<string | null>(null);
 
 
   /* =========================================================
@@ -83,17 +28,14 @@ export default function Home() {
       setScrollY(currentScroll);
 
       /*
-        Fixed checkpoint used to determine the section
-        currently occupying the main viewing area.
+        Determine which section is currently active.
       */
-      const checkpoint =
-        currentScroll + 180;
+      const checkpoint = currentScroll + 180;
 
       let currentSection = "about";
 
       for (const item of navItems) {
-        const section =
-          document.getElementById(item.id);
+        const section = document.getElementById(item.id);
 
         if (
           section &&
@@ -104,10 +46,10 @@ export default function Home() {
       }
 
       /*
-        Bottom-of-page safeguard:
-        when Education is the final section and there
-        isn't enough page height below it, make sure
-        Education becomes active.
+        Bottom-of-page safeguard.
+
+        This ensures Education becomes active when the visitor
+        reaches the actual bottom of the page.
       */
       const scrolledToBottom =
         window.innerHeight + currentScroll >=
@@ -118,11 +60,6 @@ export default function Home() {
           navItems[navItems.length - 1].id;
       }
 
-      /*
-        Only update active section during normal scrolling.
-        The hovered item controls the visual indicator
-        while the pointer is inside navigation.
-      */
       setActiveSection(currentSection);
 
       ticking = false;
@@ -169,112 +106,10 @@ export default function Home() {
 
 
   /* =========================================================
-     MEASURE ACTIVE / HOVERED NAV BUTTON
-     
-     The line is positioned from the REAL rendered button
-     position, so it remains accurate at every breakpoint.
-  ========================================================= */
-
-  useEffect(() => {
-    const measure = () => {
-      const container =
-        navContainerRef.current;
-
-      const targetButton =
-        buttonRefs.current[indicatorIndex];
-
-      if (
-        !container ||
-        !targetButton
-      ) {
-        return;
-      }
-
-      const containerRect =
-        container.getBoundingClientRect();
-
-      const buttonRect =
-        targetButton.getBoundingClientRect();
-
-      /*
-        Keep the line compact and precise.
-      */
-      const width =
-        window.innerWidth < 640
-          ? 20
-          : 24;
-
-      const buttonCenter =
-        buttonRect.left -
-        containerRect.left +
-        buttonRect.width / 2;
-
-      setUnderlineWidth(width);
-      setUnderlineX(buttonCenter);
-      setUnderlineReady(true);
-    };
-
-
-    /*
-      Measure immediately.
-    */
-    measure();
-
-
-    /*
-      Measure again after browser layout/font settling.
-    */
-    const raf =
-      window.requestAnimationFrame(
-        measure
-      );
-
-
-    /*
-      Re-measure on resize.
-    */
-    window.addEventListener(
-      "resize",
-      measure
-    );
-
-
-    /*
-      Watch the navigation size itself.
-    */
-    const resizeObserver =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(measure)
-        : null;
-
-    if (
-      resizeObserver &&
-      navContainerRef.current
-    ) {
-      resizeObserver.observe(
-        navContainerRef.current
-      );
-    }
-
-
-    return () => {
-      window.cancelAnimationFrame(raf);
-
-      window.removeEventListener(
-        "resize",
-        measure
-      );
-
-      resizeObserver?.disconnect();
-    };
-  }, [indicatorIndex]);
-
-
-  /* =========================================================
      HEADER COLLAPSE
      
-     Header height NEVER changes.
-     Only Portfolio and Navigation move internally.
+     Header height stays constant.
+     Portfolio and navigation move internally.
   ========================================================= */
 
   const collapseProgress = Math.min(
@@ -282,8 +117,9 @@ export default function Home() {
     1
   );
 
+
   /*
-    Portfolio rises upward and fades away.
+    Portfolio moves upward and fades away.
   */
   const portfolioY =
     -(collapseProgress * 54);
@@ -293,8 +129,7 @@ export default function Home() {
 
 
   /*
-    Navigation rises upward into Portfolio's
-    original position.
+    Navigation moves upward into the Portfolio position.
   */
   const navigationY =
     -(collapseProgress * 47);
@@ -307,7 +142,7 @@ export default function Home() {
   const scrollToSection = (id: string) => {
 
     /*
-      About = top of page.
+      About returns to the absolute top.
     */
     if (id === "about") {
       setActiveSection("about");
@@ -324,16 +159,17 @@ export default function Home() {
     const element =
       document.getElementById(id);
 
-    if (!element) {
-      return;
-    }
+    if (!element) return;
 
 
+    /*
+      Immediately select the clicked section.
+    */
     setActiveSection(id);
 
 
     /*
-      Keep target clear of fixed header.
+      Fixed header offset.
     */
     const headerOffset = 82;
 
@@ -343,6 +179,9 @@ export default function Home() {
       window.scrollY;
 
 
+    /*
+      Never attempt to scroll beyond the document.
+    */
     const maxScroll =
       document.documentElement.scrollHeight -
       window.innerHeight;
@@ -369,6 +208,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
+
       {/* =========================================================
           FIXED HEADER
           
@@ -392,6 +232,7 @@ export default function Home() {
           height: "118px",
         }}
       >
+
 
         {/* =====================================================
             TOP ROW
@@ -417,9 +258,10 @@ export default function Home() {
             "
           >
 
+
             {/* =================================================
                 NAME
-                STATIC
+                NEVER MOVES
             ================================================= */}
 
             <div
@@ -494,7 +336,7 @@ export default function Home() {
 
             {/* =================================================
                 SOCIAL ICONS
-                STATIC
+                NEVER MOVE
             ================================================= */}
 
             <div
@@ -507,6 +349,7 @@ export default function Home() {
                 md:gap-7
               "
             >
+
 
               {/* GitHub */}
 
@@ -610,6 +453,11 @@ export default function Home() {
 
         {/* =====================================================
             NAVIGATION
+
+            Each word owns its own yellow cursor line.
+
+            There is NO shared underline travelling between
+            the words.
         ===================================================== */}
 
         <nav
@@ -633,9 +481,7 @@ export default function Home() {
         >
 
           <div
-            ref={navContainerRef}
             className="
-              relative
               flex
               items-center
               justify-center
@@ -645,94 +491,101 @@ export default function Home() {
             "
           >
 
-            {navItems.map(
-              (item, index) => {
+            {navItems.map((item) => {
 
-                const isActive =
-                  activeSection === item.id;
+              const isActive =
+                activeSection === item.id;
 
-                const isHovered =
-                  hoveredSection === item.id;
+              const isHovered =
+                hoveredSection === item.id;
 
-                return (
-                  <button
-                    key={item.id}
-                    ref={(element) => {
-                      buttonRefs.current[index] =
-                        element;
-                    }}
-                    type="button"
-                    onClick={() =>
-                      scrollToSection(item.id)
+
+              /*
+                Hover temporarily takes visual priority.
+                When the cursor leaves the navigation,
+                the active section returns.
+              */
+              const showLine =
+                isHovered ||
+                (isActive && !hoveredSection);
+
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() =>
+                    scrollToSection(item.id)
+                  }
+                  onMouseEnter={() =>
+                    setHoveredSection(item.id)
+                  }
+                  onFocus={() =>
+                    setHoveredSection(item.id)
+                  }
+                  onBlur={() =>
+                    setHoveredSection(null)
+                  }
+                  className={`
+                    group
+                    relative
+                    pb-2
+                    whitespace-nowrap
+                    text-[12px]
+                    sm:text-[14px]
+                    md:text-[16px]
+                    transition-colors
+                    duration-200
+                    ${
+                      isActive ||
+                      isHovered
+                        ? "text-[#111]"
+                        : "text-gray-500 hover:text-[#111]"
                     }
-                    onMouseEnter={() =>
-                      setHoveredSection(item.id)
-                    }
-                    onFocus={() =>
-                      setHoveredSection(item.id)
-                    }
-                    onBlur={() =>
-                      setHoveredSection(null)
-                    }
-                    className={`
-                      relative
-                      pb-2
-                      whitespace-nowrap
-                      text-[12px]
-                      sm:text-[14px]
-                      md:text-[16px]
-                      transition-colors
-                      duration-200
-                      ${
-                        isActive ||
-                        isHovered
-                          ? "text-[#111]"
-                          : "text-gray-500 hover:text-[#111]"
-                      }
-                    `}
-                  >
+                  `}
+                >
+
+                  <span className="relative inline-block">
+
                     {item.label}
-                  </button>
-                );
-              }
-            )}
 
 
-            {/* =================================================
-                CURSOR-LIKE YELLOW INDICATOR
-                 
-                One line only.
-                It follows hover horizontally.
-                It returns to the selected item on mouse leave.
-                Its vertical position is permanently fixed.
-            ================================================= */}
+                    {/* =========================================
+                        INDIVIDUAL CURSOR LINE
 
-            <span
-              aria-hidden="true"
-              className="
-                pointer-events-none
-                absolute
-                bottom-0
-                left-0
-                h-[2px]
-                rounded-full
-                bg-[#F4B400]
-                will-change-transform
-                transition-[transform,width,opacity]
-                duration-300
-                ease-[cubic-bezier(0.22,1,0.36,1)]
-              "
-              style={{
-                width:
-                  `${underlineWidth}px`,
-                transform:
-                  `translateX(${underlineX}px) translateX(-50%)`,
-                opacity:
-                  underlineReady
-                    ? 1
-                    : 0,
-              }}
-            />
+                        The line starts at the LEFT edge of
+                        this particular word and grows toward
+                        its center.
+
+                        It never travels from another word.
+                    ========================================= */}
+
+                    <span
+                      aria-hidden="true"
+                      className={`
+                        absolute
+                        left-0
+                        bottom-[-2px]
+                        h-[2px]
+                        rounded-full
+                        bg-[#F4B400]
+                        origin-left
+                        transition-[width]
+                        duration-300
+                        ease-[cubic-bezier(0.22,1,0.36,1)]
+                        ${
+                          showLine
+                            ? "w-1/2"
+                            : "w-0"
+                        }
+                      `}
+                    />
+
+                  </span>
+
+                </button>
+              );
+            })}
 
           </div>
 
