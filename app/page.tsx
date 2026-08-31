@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import LabviewGallery from "./LabviewGallery";
+import LabviewGallery from "./projects/liquid-mixer/LabviewGallery";
 const navItems = ["About", "Projects", "Education"];
 
 const projects = [
