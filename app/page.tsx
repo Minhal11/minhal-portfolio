@@ -13,6 +13,7 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [activeSection, setActiveSection] = useState("about");
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
 
   /* =========================================================
@@ -106,6 +107,30 @@ export default function Home() {
 
 
   /* =========================================================
+     MOBILE BREAKPOINT
+
+     Mobile uses a slightly more spacious two-row header.
+     Desktop behavior remains unchanged.
+  ========================================================= */
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+
+    const updateMobileState = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    updateMobileState();
+
+    mediaQuery.addEventListener("change", updateMobileState);
+
+    return () => {
+      mediaQuery.removeEventListener("change", updateMobileState);
+    };
+  }, []);
+
+
+  /* =========================================================
      HEADER COLLAPSE
      
      Header height stays constant.
@@ -131,8 +156,17 @@ export default function Home() {
   /*
     Navigation moves upward into the Portfolio position.
   */
-  const navigationY =
-    -(collapseProgress * 47);
+  /*
+    Desktop:
+      navigation rises into Portfolio position.
+
+    Mobile:
+      navigation stays in its own compact row so the
+      name, social icons and navigation never collide.
+  */
+  const navigationY = isMobile
+    ? 0
+    : -(collapseProgress * 47);
 
 
   /* =========================================================
@@ -227,10 +261,9 @@ export default function Home() {
           z-50
           w-full
           bg-[#F8F8F5]
+          h-[104px]
+          sm:h-[118px]
         "
-        style={{
-          height: "118px",
-        }}
       >
 
 
@@ -242,7 +275,8 @@ export default function Home() {
           className="
             max-w-6xl
             mx-auto
-            h-[68px]
+            h-[56px]
+            sm:h-[68px]
             px-4
             sm:px-6
             md:px-8
@@ -277,7 +311,7 @@ export default function Home() {
                   scrollToSection("about")
                 }
                 className="
-                  text-[14px]
+                  text-[12px]
                   sm:text-[15px]
                   md:text-lg
                   font-semibold
@@ -317,7 +351,7 @@ export default function Home() {
                   scrollToSection("about")
                 }
                 className="
-                  text-[24px]
+                  text-[18px]
                   sm:text-[28px]
                   md:text-4xl
                   font-medium
@@ -344,7 +378,7 @@ export default function Home() {
                 justify-self-end
                 flex
                 items-center
-                gap-3
+                gap-2
                 sm:gap-5
                 md:gap-7
               "
@@ -465,7 +499,8 @@ export default function Home() {
             absolute
             left-0
             right-0
-            top-[68px]
+            top-[56px]
+            sm:top-[68px]
             flex
             justify-center
             px-4
@@ -485,7 +520,7 @@ export default function Home() {
               flex
               items-center
               justify-center
-              gap-5
+              gap-4
               sm:gap-8
               md:gap-14
             "
@@ -531,7 +566,7 @@ export default function Home() {
                     relative
                     pb-2
                     whitespace-nowrap
-                    text-[12px]
+                    text-[11px]
                     sm:text-[14px]
                     md:text-[16px]
                     transition-colors
@@ -601,10 +636,11 @@ export default function Home() {
       <section
         id="about"
         className="
-          min-h-[650px]
+          min-h-[600px]
+          sm:min-h-[650px]
           flex
           items-center
-          pt-[150px]
+          pt-[118px]
           sm:pt-[160px]
           md:pt-[175px]
           pb-20
