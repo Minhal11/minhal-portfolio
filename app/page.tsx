@@ -1,42 +1,120 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  /*
+    Header animation
+    ----------------
+    0   = top of page
+    1   = fully collapsed header
+  */
+  const collapseProgress = Math.min(scrollY / 140, 1);
+
+  // Portfolio moves upward and gradually disappears.
+  const portfolioY = -(collapseProgress * 54);
+  const portfolioOpacity = 1 - collapseProgress;
+
+  // Navigation moves upward into the Portfolio position.
+  const navigationY = -(collapseProgress * 47);
+
+  // Header gets slightly shorter as it collapses.
+  const headerHeight = 118 - collapseProgress * 42;
+
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
       {/* =========================================================
-          FIXED HEADER + NAVIGATION
+          COLLAPSING FIXED HEADER
       ========================================================= */}
-      <header className="fixed top-0 left-0 right-0 z-50 w-full bg-[#F8F8F5]/95 backdrop-blur-sm border-b border-[#EAEAE5]/70">
+      <header
+        className="fixed top-0 left-0 right-0 z-50 w-full bg-[#F8F8F5]/95 backdrop-blur-sm border-b border-[#EAEAE5]/70"
+        style={{
+          height: `${headerHeight}px`,
+        }}
+      >
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-5 sm:py-6">
+        {/* Main top row */}
+        <div className="max-w-6xl mx-auto h-[68px] px-4 sm:px-6 md:px-8">
 
-          {/* Top row */}
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full">
 
-            {/* Name */}
+            {/* ===================================================
+                NAME
+                Stays fixed in position
+            =================================================== */}
             <div className="justify-self-start min-w-0">
               <Link
                 href="/"
-                className="text-[14px] sm:text-[15px] md:text-lg font-semibold tracking-tight whitespace-nowrap"
+                className="
+                  text-[14px]
+                  sm:text-[15px]
+                  md:text-lg
+                  font-semibold
+                  tracking-tight
+                  whitespace-nowrap
+                "
               >
                 Minhal Rahman
               </Link>
             </div>
 
 
-            {/* Portfolio */}
-            <div className="justify-self-center">
+            {/* ===================================================
+                PORTFOLIO
+                Moves upward with scroll
+            =================================================== */}
+            <div
+              className="justify-self-center will-change-transform"
+              style={{
+                transform: `translateY(${portfolioY}px)`,
+                opacity: portfolioOpacity,
+              }}
+            >
               <Link
                 href="/"
-                className="text-[24px] sm:text-[28px] md:text-4xl font-medium tracking-tight whitespace-nowrap"
+                className="
+                  text-[24px]
+                  sm:text-[28px]
+                  md:text-4xl
+                  font-medium
+                  tracking-tight
+                  whitespace-nowrap
+                "
               >
                 Portfolio<span className="text-[#F4B400]">.</span>
               </Link>
             </div>
 
 
-            {/* Social Icons */}
+            {/* ===================================================
+                SOCIAL ICONS
+                Stay fixed in position
+            =================================================== */}
             <div className="justify-self-end flex items-center gap-3 sm:gap-5 md:gap-7">
 
               {/* GitHub */}
@@ -100,66 +178,168 @@ export default function Home() {
 
             </div>
           </div>
+        </div>
 
 
-          {/* Navigation */}
-          <nav className="flex justify-center gap-8 sm:gap-10 md:gap-14 mt-5 sm:mt-6">
+        {/* =========================================================
+            NAVIGATION
+            Starts underneath Portfolio and moves upward
+        ========================================================= */}
+        <nav
+          className="
+            absolute
+            left-0
+            right-0
+            top-[68px]
+            flex
+            justify-center
+            px-4
+            will-change-transform
+          "
+          style={{
+            transform: `translateY(${navigationY}px)`,
+          }}
+        >
 
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+              gap-5
+              sm:gap-8
+              md:gap-14
+            "
+          >
+
+            {/* About */}
             <a
               href="#about"
-              className="relative text-[14px] sm:text-[15px] md:text-[16px] text-[#111] pb-2"
+              className="
+                relative
+                text-[12px]
+                sm:text-[14px]
+                md:text-[16px]
+                text-[#111]
+                pb-2
+                whitespace-nowrap
+              "
             >
               About
 
-              <span className="absolute left-0 bottom-0 w-6 h-[2px] bg-[#F4B400]" />
+              <span className="absolute left-0 bottom-0 w-5 sm:w-6 h-[2px] bg-[#F4B400]" />
             </a>
 
 
+            {/* Projects */}
             <a
               href="#projects"
-              className="text-[14px] sm:text-[15px] md:text-[16px] text-gray-500 hover:text-[#111] transition pb-2"
+              className="
+                text-[12px]
+                sm:text-[14px]
+                md:text-[16px]
+                text-gray-500
+                hover:text-[#111]
+                transition
+                pb-2
+                whitespace-nowrap
+              "
             >
               Projects
             </a>
 
 
+            {/* Education */}
             <a
               href="#education"
-              className="text-[14px] sm:text-[15px] md:text-[16px] text-gray-500 hover:text-[#111] transition pb-2"
+              className="
+                text-[12px]
+                sm:text-[14px]
+                md:text-[16px]
+                text-gray-500
+                hover:text-[#111]
+                transition
+                pb-2
+                whitespace-nowrap
+              "
             >
               Education
             </a>
 
-          </nav>
+          </div>
+        </nav>
 
-        </div>
       </header>
 
 
       {/* =========================================================
           HERO
-          Extra top padding compensates for fixed header
       ========================================================= */}
       <section
         id="about"
-        className="min-h-[650px] flex items-center pt-[190px] sm:pt-[200px] md:pt-[215px] pb-20"
+        className="
+          min-h-[650px]
+          flex
+          items-center
+          pt-[150px]
+          sm:pt-[160px]
+          md:pt-[175px]
+          pb-20
+        "
       >
 
         <div className="max-w-6xl mx-auto px-5 sm:px-6 w-full">
 
           <div className="text-center max-w-4xl mx-auto">
 
-            <h1 className="text-[48px] sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-[-2.5px] sm:tracking-[-3px] md:tracking-[-4px] leading-[0.95]">
+            <h1
+              className="
+                text-[48px]
+                sm:text-6xl
+                md:text-7xl
+                lg:text-8xl
+                font-black
+                tracking-[-2.5px]
+                sm:tracking-[-3px]
+                md:tracking-[-4px]
+                leading-[0.95]
+              "
+            >
               Hi, I&apos;m Minhal
             </h1>
 
 
-            <h2 className="mt-7 sm:mt-8 text-[21px] sm:text-2xl md:text-3xl lg:text-4xl font-medium tracking-tight leading-tight">
+            <h2
+              className="
+                mt-7
+                sm:mt-8
+                text-[21px]
+                sm:text-2xl
+                md:text-3xl
+                lg:text-4xl
+                font-medium
+                tracking-tight
+                leading-tight
+              "
+            >
               Automation &amp; Instrumentation Engineer
             </h2>
 
 
-            <p className="mt-6 sm:mt-8 text-[16px] sm:text-lg md:text-xl text-gray-500 leading-8 sm:leading-9 max-w-[680px] mx-auto">
+            <p
+              className="
+                mt-6
+                sm:mt-8
+                text-[16px]
+                sm:text-lg
+                md:text-xl
+                text-gray-500
+                leading-8
+                sm:leading-9
+                max-w-[680px]
+                mx-auto
+              "
+            >
               Aspiring Automation &amp; Instrumentation Engineer focused on
               industrial control systems, process automation, and engineering
               innovation.
@@ -360,7 +540,6 @@ export default function Home() {
 
       {/* =========================================================
           EDUCATION
-          We will redesign this in the next step.
       ========================================================= */}
       <section
         id="education"
