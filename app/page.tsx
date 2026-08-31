@@ -169,7 +169,8 @@ export default function Home() {
 
               {/* DOWNLOAD RESUME */}
               <a
-  href="/api/resume"
+  href="/resume.pdf"
+  download="Minhal_Rahman_Resume.pdf"
   className="
     w-full
     sm:w-auto
@@ -182,6 +183,9 @@ export default function Home() {
     font-medium
     hover:border-[#111]
     transition
+    inline-flex
+    items-center
+    justify-center
   "
 >
   Download Resume
