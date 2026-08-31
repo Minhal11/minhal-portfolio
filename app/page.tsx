@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 
 const navItems = [
   { id: "about", label: "About" },
@@ -14,79 +9,34 @@ const navItems = [
   { id: "education", label: "Education" },
 ];
 
-type UnderlinePosition = {
-  left: number;
-  width: number;
-};
-
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [activeSection, setActiveSection] = useState("about");
 
-  const navRef = useRef<HTMLDivElement | null>(null);
-
-  const buttonRefs = useRef<
-    Record<string, HTMLButtonElement | null>
-  >({});
-
-  const scrollTargetRef = useRef<number | null>(null);
-
-  const [underline, setUnderline] =
-    useState<UnderlinePosition>({
-      left: 0,
-      width: 24,
-    });
-
-
   /* =========================================================
-     SCROLL POSITION
+     SCROLL POSITION + ACTIVE SECTION
   ========================================================= */
 
   useEffect(() => {
     let ticking = false;
 
-    const updateScroll = () => {
+    const updateScrollState = () => {
       const currentScroll = window.scrollY;
 
       setScrollY(currentScroll);
 
       /*
-        -------------------------------------------------------
-        When clicking a navigation item, temporarily lock the
-        active indicator to the requested destination while
-        the browser performs the smooth scroll.
-        -------------------------------------------------------
+        Determine which section is currently active.
+
+        We use a fixed checkpoint rather than IntersectionObserver
+        so the active indicator doesn't flicker during smooth scroll.
       */
-
-      const target = scrollTargetRef.current;
-
-      if (target !== null) {
-        const difference = Math.abs(
-          currentScroll - target
-        );
-
-        if (difference <= 8) {
-          scrollTargetRef.current = null;
-        } else {
-          ticking = false;
-          return;
-        }
-      }
-
-
-      /*
-        -------------------------------------------------------
-        Normal manual scrolling
-        -------------------------------------------------------
-      */
-
       const checkpoint = currentScroll + 180;
 
       let currentSection = "about";
 
       for (const item of navItems) {
-        const section =
-          document.getElementById(item.id);
+        const section = document.getElementById(item.id);
 
         if (
           section &&
@@ -96,145 +46,52 @@ export default function Home() {
         }
       }
 
+      /*
+        Guard: if the user has scrolled to (or very near) the bottom of the
+        page, force the last section active. This prevents the checkpoint
+        math from ever "falling short" of Education when the last section
+        is shorter than the fixed 180px offset.
+      */
+      const scrolledToBottom =
+        window.innerHeight + currentScroll >=
+        document.documentElement.scrollHeight - 2;
+
+      if (scrolledToBottom) {
+        currentSection = navItems[navItems.length - 1].id;
+      }
+
       setActiveSection(currentSection);
 
       ticking = false;
     };
 
-
     const handleScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(updateScroll);
+        window.requestAnimationFrame(updateScrollState);
         ticking = true;
       }
     };
 
+    updateScrollState();
 
-    updateScroll();
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
-    window.addEventListener(
-      "scroll",
-      handleScroll,
-      { passive: true }
-    );
+    window.addEventListener("resize", updateScrollState);
 
     return () => {
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateScrollState);
     };
   }, []);
 
 
   /* =========================================================
-     ACTIVE NAVIGATION UNDERLINE
+     HEADER COLLAPSE
      
-     IMPORTANT:
-     Measure the actual rendered button position.
-
-     This eliminates hard-coded horizontal offsets and
-     keeps the underline perfectly aligned on desktop,
-     tablet and mobile.
-  ========================================================= */
-
-  useLayoutEffect(() => {
-    const updateUnderline = () => {
-      const nav = navRef.current;
-
-      const activeButton =
-        buttonRefs.current[activeSection];
-
-      if (!nav || !activeButton) {
-        return;
-      }
-
-      const navRect =
-        nav.getBoundingClientRect();
-
-      const buttonRect =
-        activeButton.getBoundingClientRect();
-
-      /*
-        Keep the underline visually small and modern.
-      */
-      const underlineWidth =
-        window.innerWidth < 640
-          ? 20
-          : 24;
-
-      /*
-        Position underline exactly at the center
-        of the active text/button.
-      */
-      const buttonCenter =
-        buttonRect.left +
-        buttonRect.width / 2;
-
-      const left =
-        buttonCenter -
-        navRect.left -
-        underlineWidth / 2;
-
-      setUnderline({
-        left,
-        width: underlineWidth,
-      });
-    };
-
-
-    /*
-      Wait one animation frame so the browser has
-      completed the active-state render before measuring.
-    */
-    const frame =
-      window.requestAnimationFrame(
-        updateUnderline
-      );
-
-
-    const handleResize = () => {
-      updateUnderline();
-    };
-
-
-    window.addEventListener(
-      "resize",
-      handleResize
-    );
-
-
-    /*
-      ResizeObserver keeps the underline aligned
-      if fonts/layout change size.
-    */
-    const resizeObserver =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(updateUnderline)
-        : null;
-
-    if (resizeObserver && navRef.current) {
-      resizeObserver.observe(navRef.current);
-    }
-
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-
-      window.removeEventListener(
-        "resize",
-        handleResize
-      );
-
-      resizeObserver?.disconnect();
-    };
-  }, [activeSection]);
-
-
-  /* =========================================================
-     HEADER SCROLL ANIMATION
-     
-     Header itself never changes height.
+     The header itself NEVER changes height.
+     Only Portfolio and Navigation move internally.
   ========================================================= */
 
   const collapseProgress = Math.min(
@@ -243,7 +100,7 @@ export default function Home() {
   );
 
   /*
-    Portfolio rises out of the header.
+    Portfolio moves upward and fades away.
   */
   const portfolioY =
     -(collapseProgress * 54);
@@ -253,25 +110,20 @@ export default function Home() {
 
 
   /*
-    Navigation rises into Portfolio's original position.
+    Navigation starts underneath Portfolio
+    and moves into its position.
   */
   const navigationY =
     -(collapseProgress * 47);
 
 
   /* =========================================================
-     SMOOTH SECTION NAVIGATION
+     SMOOTH SECTION SCROLL
   ========================================================= */
 
   const scrollToSection = (id: string) => {
-
-    /*
-      ABOUT = page top
-    */
     if (id === "about") {
       setActiveSection("about");
-
-      scrollTargetRef.current = 0;
 
       window.scrollTo({
         top: 0,
@@ -281,55 +133,23 @@ export default function Home() {
       return;
     }
 
-
     const element =
       document.getElementById(id);
 
-    if (!element) {
-      return;
-    }
+    if (!element) return;
 
-
-    /*
-      Fixed header offset.
-    */
-    const headerOffset = 82;
-
-
-    /*
-      Calculate the natural target position.
-    */
-    const rawTarget =
-      element.getBoundingClientRect().top +
-      window.scrollY -
-      headerOffset;
-
-
-    /*
-      Prevent trying to scroll beyond the page's
-      maximum scroll position.
-    */
-    const maxScroll =
-      document.documentElement.scrollHeight -
-      window.innerHeight;
-
-
-    const targetPosition = Math.min(
-      Math.max(rawTarget, 0),
-      Math.max(maxScroll, 0)
-    );
-
-
-    /*
-      Set the active section immediately.
-      The scroll handler won't override it until
-      the destination is reached.
-    */
     setActiveSection(id);
 
-    scrollTargetRef.current =
-      targetPosition;
+    const headerOffset = 82;
 
+    const elementPosition =
+      element.getBoundingClientRect().top +
+      window.scrollY;
+
+    const targetPosition = Math.max(
+      elementPosition - headerOffset,
+      0
+    );
 
     window.scrollTo({
       top: targetPosition,
@@ -338,17 +158,79 @@ export default function Home() {
   };
 
 
+  /* =========================================================
+     ACTIVE NAVIGATION INDEX
+  ========================================================= */
+
+  const activeIndex = Math.max(
+    navItems.findIndex(
+      (item) => item.id === activeSection
+    ),
+    0
+  );
+
+
+  /* =========================================================
+     UNDERLINE POSITION (measured, not percentage-based)
+
+     Instead of computing "left" as a percentage of the nav
+     container (which drifts out of sync with the container's
+     fixed pixel width across breakpoints and causes the
+     horizontal glitch), we measure the actual rendered
+     center of the active button and animate a single
+     `translateX` transform. This is GPU-accelerated, pixel
+     accurate at every breakpoint, and always lands exactly
+     under the active label - including Education.
+  ========================================================= */
+
+  const navContainerRef = useRef<HTMLDivElement>(null);
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [underlineX, setUnderlineX] = useState(0);
+  const [underlineReady, setUnderlineReady] = useState(false);
+
+  useEffect(() => {
+    const measure = () => {
+      const container = navContainerRef.current;
+      const activeButton = buttonRefs.current[activeIndex];
+
+      if (!container || !activeButton) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const buttonRect = activeButton.getBoundingClientRect();
+
+      const centerX =
+        buttonRect.left -
+        containerRect.left +
+        buttonRect.width / 2;
+
+      setUnderlineX(centerX);
+      setUnderlineReady(true);
+    };
+
+    // Measure now, and again on the next frame once layout/fonts
+    // have settled (avoids a mis-measured first paint).
+    measure();
+    const raf = window.requestAnimationFrame(measure);
+
+    window.addEventListener("resize", measure);
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("resize", measure);
+    };
+  }, [activeIndex]);
+
+
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
-
       {/* =========================================================
           FIXED HEADER
-          
+
           Minimal
           Futuristic
-          No border
           No blur
+          No separator line
       ========================================================= */}
 
       <header
@@ -365,7 +247,6 @@ export default function Home() {
           height: "118px",
         }}
       >
-
 
         {/* =====================================================
             TOP ROW
@@ -391,18 +272,12 @@ export default function Home() {
             "
           >
 
-
             {/* =================================================
                 NAME
-                STATIC
+                NEVER MOVES
             ================================================= */}
 
-            <div
-              className="
-                justify-self-start
-                min-w-0
-              "
-            >
+            <div className="justify-self-start min-w-0">
 
               <button
                 type="button"
@@ -428,7 +303,7 @@ export default function Home() {
 
             {/* =================================================
                 PORTFOLIO
-                SCROLL-LINKED
+                SCROLL LINKED
             ================================================= */}
 
             <div
@@ -469,7 +344,7 @@ export default function Home() {
 
             {/* =================================================
                 SOCIAL ICONS
-                STATIC
+                NEVER MOVE
             ================================================= */}
 
             <div
@@ -483,9 +358,7 @@ export default function Home() {
               "
             >
 
-
               {/* GitHub */}
-
               <a
                 href="https://github.com/Minhal11"
                 target="_blank"
@@ -497,23 +370,18 @@ export default function Home() {
                   transition-colors
                 "
               >
-
                 <svg
                   width="19"
                   height="19"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
-
                   <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2-.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
-
                 </svg>
-
               </a>
 
 
               {/* LinkedIn */}
-
               <a
                 href="https://www.linkedin.com/in/minhal-rahman/"
                 target="_blank"
@@ -525,23 +393,18 @@ export default function Home() {
                   transition-colors
                 "
               >
-
                 <svg
                   width="19"
                   height="19"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
-
                   <path d="M4.98 3.5A2.49 2.49 0 1 1 5 8.48a2.49 2.49 0 0 1-.02-4.98ZM3 9.75h4V21H3V9.75Zm6.5 0h3.83v1.54h.05c.53-1 1.84-2.05 3.79-2.05 4.05 0 4.8 2.66 4.8 6.12V21h-4v-4.99c0-1.19-.02-2.72-1.66-2.72-1.66 0-1.91 1.3-1.91 2.64V21h-4V9.75Z" />
-
                 </svg>
-
               </a>
 
 
               {/* Email */}
-
               <a
                 href="mailto:minhalrahman21@gmail.com"
                 aria-label="Email"
@@ -551,7 +414,6 @@ export default function Home() {
                   transition-colors
                 "
               >
-
                 <svg
                   width="20"
                   height="20"
@@ -562,7 +424,6 @@ export default function Home() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-
                   <rect
                     x="3"
                     y="5"
@@ -570,11 +431,8 @@ export default function Home() {
                     height="14"
                     rx="2"
                   />
-
                   <path d="m3 7 9 6 9-6" />
-
                 </svg>
-
               </a>
 
             </div>
@@ -586,6 +444,10 @@ export default function Home() {
 
         {/* =====================================================
             NAVIGATION
+
+            Equal-width columns
+            One shared underline
+            Underline moves horizontally only
         ===================================================== */}
 
         <nav
@@ -605,22 +467,20 @@ export default function Home() {
           }}
         >
 
-          {/* Navigation measurement container */}
-
           <div
-            ref={navRef}
+            ref={navContainerRef}
             className="
               relative
-              flex
+              grid
+              grid-cols-3
               items-center
-              justify-center
-              gap-5
-              sm:gap-8
-              md:gap-14
+              w-[240px]
+              sm:w-[280px]
+              md:w-[330px]
             "
           >
 
-            {navItems.map((item) => {
+            {navItems.map((item, index) => {
 
               const isActive =
                 activeSection === item.id;
@@ -628,16 +488,18 @@ export default function Home() {
               return (
                 <button
                   key={item.id}
-                  ref={(element) => {
-                    buttonRefs.current[item.id] =
-                      element;
+                  ref={(el) => {
+                    buttonRefs.current[index] = el;
                   }}
                   type="button"
                   onClick={() =>
                     scrollToSection(item.id)
                   }
                   className={`
-                    relative
+                    h-8
+                    flex
+                    items-start
+                    justify-center
                     pb-2
                     whitespace-nowrap
                     text-[12px]
@@ -659,12 +521,13 @@ export default function Home() {
 
 
             {/* =================================================
-                SINGLE SHARED UNDERLINE
-                
-                Its position comes from the REAL active
-                button position.
-                
-                It NEVER moves vertically.
+                SHARED UNDERLINE
+
+                Vertical position is locked permanently.
+                Horizontal position is a measured pixel value,
+                animated purely via `transform: translateX`
+                (GPU-accelerated, no layout thrash, always
+                pixel-accurate - including for Education).
             ================================================= */}
 
             <span
@@ -673,16 +536,20 @@ export default function Home() {
                 pointer-events-none
                 absolute
                 bottom-0
+                left-0
+                w-5
+                sm:w-6
                 h-[2px]
                 rounded-full
                 bg-[#F4B400]
-                transition-[left]
+                will-change-transform
+                transition-transform
                 duration-500
                 ease-[cubic-bezier(0.22,1,0.36,1)]
               "
               style={{
-                left: underline.left,
-                width: underline.width,
+                transform: `translateX(${underlineX}px) translateX(-50%)`,
+                opacity: underlineReady ? 1 : 0,
               }}
             />
 
@@ -721,13 +588,7 @@ export default function Home() {
           "
         >
 
-          <div
-            className="
-              text-center
-              max-w-4xl
-              mx-auto
-            "
-          >
+          <div className="text-center max-w-4xl mx-auto">
 
             <h1
               className="
@@ -784,7 +645,6 @@ export default function Home() {
 
 
             {/* Buttons */}
-
             <div
               className="
                 mt-9
@@ -801,7 +661,6 @@ export default function Home() {
             >
 
               {/* View Projects */}
-
               <button
                 type="button"
                 onClick={() =>
@@ -826,7 +685,6 @@ export default function Home() {
 
 
               {/* Download Resume */}
-
               <a
                 href="/Minhal_Rahman_Resume.pdf"
                 download
@@ -1010,7 +868,6 @@ export default function Home() {
                   LabVIEW
                 </span>
 
-
                 <span
                   className="
                     px-3
@@ -1022,7 +879,6 @@ export default function Home() {
                 >
                   ESP32
                 </span>
-
 
                 <span
                   className="
@@ -1074,23 +930,12 @@ export default function Home() {
               </p>
 
 
-              <h3
-                className="
-                  mt-4
-                  text-2xl
-                  font-bold
-                "
-              >
+              <h3 className="mt-4 text-2xl font-bold">
                 Coming Soon
               </h3>
 
 
-              <p
-                className="
-                  mt-3
-                  text-gray-500
-                "
-              >
+              <p className="mt-3 text-gray-500">
                 More engineering and automation projects will be added here.
               </p>
 
@@ -1154,12 +999,7 @@ export default function Home() {
           </h2>
 
 
-          <div
-            className="
-              mt-10
-              sm:mt-12
-            "
-          >
+          <div className="mt-10 sm:mt-12">
 
             <div
               className="
