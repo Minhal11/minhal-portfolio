@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
 
 const navItems = [
   { id: "about", label: "About" },
@@ -43,7 +42,9 @@ export default function Home() {
 
 
   /* =========================================================
-     ACTIVE SECTION DETECTION
+     ACTIVE SECTION
+     
+     Detects which section is currently being viewed.
   ========================================================= */
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export default function Home() {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const visible = entries
+        const visibleSections = entries
           .filter((entry) => entry.isIntersecting)
           .sort(
             (a, b) =>
@@ -63,8 +64,8 @@ export default function Home() {
               b.boundingClientRect.top
           );
 
-        if (visible.length > 0) {
-          setActiveSection(visible[0].target.id);
+        if (visibleSections.length > 0) {
+          setActiveSection(visibleSections[0].target.id);
         }
       },
       {
@@ -74,7 +75,9 @@ export default function Home() {
       }
     );
 
-    sections.forEach((section) => observer.observe(section));
+    sections.forEach((section) => {
+      observer.observe(section);
+    });
 
     return () => {
       observer.disconnect();
@@ -83,37 +86,23 @@ export default function Home() {
 
 
   /* =========================================================
-     HEADER COLLAPSE
+     HEADER SCROLL ANIMATION
      
      IMPORTANT:
-     The header height itself NEVER changes.
-     Only Portfolio + Navigation move internally.
-     This removes the About <-> Projects vertical jump.
+     Header height stays completely fixed.
+     Only Portfolio and Navigation move internally.
   ========================================================= */
 
   const collapseProgress = Math.min(scrollY / 140, 1);
 
-  /*
-    Portfolio:
-    starts in the center of the upper header area
-    and moves upward out of view.
-  */
   const portfolioY = -(collapseProgress * 54);
+  const portfolioOpacity = 1 - collapseProgress;
 
-  const portfolioOpacity =
-    1 - collapseProgress;
-
-
-  /*
-    Navigation:
-    starts below Portfolio and moves upward into
-    the Portfolio position.
-  */
   const navigationY = -(collapseProgress * 47);
 
 
   /* =========================================================
-     SMOOTH NAVIGATION
+     SMOOTH SECTION SCROLL
   ========================================================= */
 
   const scrollToSection = (id: string) => {
@@ -152,15 +141,29 @@ export default function Home() {
   };
 
 
+  /* =========================================================
+     UNDERLINE POSITION
+     
+     The navigation uses equal-width slots.
+     Therefore the underline can animate ONLY horizontally.
+     
+     This completely removes the vertical jump.
+  ========================================================= */
+
+  const activeIndex = Math.max(
+    navItems.findIndex(
+      (item) => item.id === activeSection
+    ),
+    0
+  );
+
+
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
+
       {/* =========================================================
           FIXED HEADER
-          
-          Constant height.
-          No border.
-          No blur.
       ========================================================= */}
 
       <header
@@ -204,7 +207,7 @@ export default function Home() {
 
             {/* =================================================
                 NAME
-                ALWAYS STATIONARY
+                STAYS COMPLETELY FIXED
             ================================================= */}
 
             <div className="justify-self-start min-w-0">
@@ -231,13 +234,13 @@ export default function Home() {
 
             {/* =================================================
                 PORTFOLIO
+                SCROLL-LINKED
             ================================================= */}
 
             <div
               className="
                 justify-self-center
                 will-change-transform
-                pointer-events-auto
               "
               style={{
                 transform: `translateY(${portfolioY}px)`,
@@ -265,7 +268,7 @@ export default function Home() {
 
             {/* =================================================
                 SOCIAL ICONS
-                ALWAYS STATIONARY
+                STAY COMPLETELY FIXED
             ================================================= */}
 
             <div
@@ -365,6 +368,7 @@ export default function Home() {
 
         {/* =====================================================
             NAVIGATION
+            ONLY HORIZONTAL UNDERLINE MOVEMENT
         ===================================================== */}
 
         <nav
@@ -385,16 +389,22 @@ export default function Home() {
 
           <div
             className="
-              flex
+              relative
+              grid
+              grid-cols-3
               items-center
-              justify-center
-              gap-5
-              sm:gap-8
-              md:gap-14
+              w-[210px]
+              sm:w-[270px]
+              md:w-[330px]
             "
           >
 
+            {/* =================================================
+                STATIC NAV ITEMS
+            ================================================= */}
+
             {navItems.map((item) => {
+
               const isActive =
                 activeSection === item.id;
 
@@ -407,11 +417,13 @@ export default function Home() {
                   }
                   className={`
                     relative
-                    pb-2
+                    h-8
+                    text-center
                     whitespace-nowrap
                     text-[12px]
                     sm:text-[14px]
                     md:text-[16px]
+                    pb-2
                     transition-colors
                     duration-200
                     ${
@@ -421,35 +433,39 @@ export default function Home() {
                     }
                   `}
                 >
-
                   {item.label}
-
-                  {/* Shared moving underline */}
-                  {isActive && (
-                    <motion.span
-                      layoutId="active-navigation-underline"
-                      className="
-                        absolute
-                        left-0
-                        bottom-0
-                        w-5
-                        sm:w-6
-                        h-[2px]
-                        rounded-full
-                        bg-[#F4B400]
-                      "
-                      transition={{
-                        type: "spring",
-                        stiffness: 480,
-                        damping: 34,
-                        mass: 0.55,
-                      }}
-                    />
-                  )}
-
                 </button>
               );
             })}
+
+
+            {/* =================================================
+                SINGLE SHARED UNDERLINE
+                 
+                This element NEVER animates vertically.
+                It only moves left/right.
+            ================================================= */}
+
+            <span
+              aria-hidden="true"
+              className="
+                absolute
+                bottom-0
+                left-0
+                w-5
+                sm:w-6
+                h-[2px]
+                rounded-full
+                bg-[#F4B400]
+                pointer-events-none
+                transition-transform
+                duration-500
+                ease-[cubic-bezier(0.22,1,0.36,1)]
+              "
+              style={{
+                transform: `translateX(calc(${activeIndex} * 70px + 23px))`,
+              }}
+            />
 
           </div>
 
