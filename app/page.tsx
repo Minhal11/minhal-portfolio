@@ -169,25 +169,23 @@ export default function Home() {
 
               {/* DOWNLOAD RESUME */}
               <a
-                href="/resume.pdf"
-                download="Minhal_Rahman_Resume.pdf"
-                className="
-                  w-full
-                  sm:w-auto
-                  border
-                  border-[#DDD]
-                  px-8
-                  py-4
-                  rounded-full
-                  text-[14px]
-                  font-medium
-                  hover:border-[#111]
-                  transition
-                "
-              >
-                Download Resume
-              </a>
-
+  href="/api/resume"
+  className="
+    w-full
+    sm:w-auto
+    border
+    border-[#DDD]
+    px-8
+    py-4
+    rounded-full
+    text-[14px]
+    font-medium
+    hover:border-[#111]
+    transition
+  "
+>
+  Download Resume
+</a>
             </div>
 
           </div>
