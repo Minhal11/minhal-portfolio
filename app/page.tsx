@@ -2,11 +2,21 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+const navItems = [
+  { id: "about", label: "About" },
+  { id: "projects", label: "Projects" },
+  { id: "education", label: "Education" },
+];
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [activeSection, setActiveSection] = useState("about");
 
+  /* =========================================================
+     SCROLL POSITION
+  ========================================================= */
   useEffect(() => {
     let ticking = false;
 
@@ -21,58 +31,59 @@ export default function Home() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  /*
-    Keep the navigation indicator synchronized with the
-    section currently visible on the page.
-  */
+
+  /* =========================================================
+     ACTIVE SECTION DETECTION
+     Uses IntersectionObserver so the active nav item follows
+     the section currently entering the viewing area.
+  ========================================================= */
   useEffect(() => {
-    const sections = ["about", "projects", "education"];
+    const sections = navItems
+      .map((item) => document.getElementById(item.id))
+      .filter((section): section is HTMLElement => section !== null);
 
-    const handleSectionScroll = () => {
-      const checkpoint = window.scrollY + 140;
+    if (!sections.length) return;
 
-      let currentSection = "about";
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleEntries = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top - b.boundingClientRect.top
+          );
 
-      for (const id of sections) {
-        const section = document.getElementById(id);
-
-        if (section && section.offsetTop <= checkpoint) {
-          currentSection = id;
+        if (visibleEntries.length > 0) {
+          setActiveSection(visibleEntries[0].target.id);
         }
+      },
+      {
+        root: null,
+        rootMargin: "-110px 0px -50% 0px",
+        threshold: 0,
       }
+    );
 
-      setActiveSection(currentSection);
-    };
-
-    handleSectionScroll();
-
-    window.addEventListener("scroll", handleSectionScroll, {
-      passive: true,
-    });
+    sections.forEach((section) => observer.observe(section));
 
     return () => {
-      window.removeEventListener("scroll", handleSectionScroll);
+      observer.disconnect();
     };
   }, []);
 
-  /*
-    Scroll-linked header animation
-    --------------------------------
-    At the top:
-      Portfolio is visible
-      Navigation sits below it
 
-    As the page scrolls:
-      Portfolio moves upward + fades
-      Navigation moves upward into its place
-  */
+  /* =========================================================
+     SCROLL-LINKED HEADER ANIMATION
+  ========================================================= */
 
   const collapseProgress = Math.min(scrollY / 140, 1);
 
@@ -83,16 +94,12 @@ export default function Home() {
 
   const headerHeight = 118 - collapseProgress * 42;
 
-  /*
-    Smooth section scrolling
-    --------------------------------
-    Keeps the destination below the fixed header.
-  */
+
+  /* =========================================================
+     SMOOTH SECTION SCROLL
+  ========================================================= */
+
   const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-
-    if (!element) return;
-
     if (id === "about") {
       setActiveSection("about");
 
@@ -103,6 +110,10 @@ export default function Home() {
 
       return;
     }
+
+    const element = document.getElementById(id);
+
+    if (!element) return;
 
     setActiveSection(id);
 
@@ -122,13 +133,13 @@ export default function Home() {
     });
   };
 
+
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
-      {/* =========================================================
+      {/* =====================================================
           FIXED HEADER
-          Minimal / futuristic / no divider / no blur
-      ========================================================= */}
+      ===================================================== */}
       <header
         className="
           fixed
@@ -144,14 +155,16 @@ export default function Home() {
         }}
       >
 
-        {/* Top row */}
+        {/* ===================================================
+            TOP ROW
+        =================================================== */}
         <div className="max-w-6xl mx-auto h-[68px] px-4 sm:px-6 md:px-8">
 
           <div className="grid grid-cols-[1fr_auto_1fr] items-center h-full">
 
             {/* =================================================
                 NAME
-                ================================================= */}
+            ================================================= */}
             <div className="justify-self-start min-w-0">
 
               <button
@@ -176,9 +189,12 @@ export default function Home() {
 
             {/* =================================================
                 PORTFOLIO
-                ================================================= */}
+            ================================================= */}
             <div
-              className="justify-self-center will-change-transform"
+              className="
+                justify-self-center
+                will-change-transform
+              "
               style={{
                 transform: `translateY(${portfolioY}px)`,
                 opacity: portfolioOpacity,
@@ -205,7 +221,7 @@ export default function Home() {
 
             {/* =================================================
                 SOCIAL ICONS
-                ================================================= */}
+            ================================================= */}
             <div className="justify-self-end flex items-center gap-3 sm:gap-5 md:gap-7">
 
               {/* GitHub */}
@@ -226,7 +242,7 @@ export default function Home() {
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
-                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47-.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
                 </svg>
               </a>
 
@@ -274,7 +290,13 @@ export default function Home() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <rect
+                    x="3"
+                    y="5"
+                    width="18"
+                    height="14"
+                    rx="2"
+                  />
                   <path d="m3 7 9 6 9-6" />
                 </svg>
               </a>
@@ -282,12 +304,14 @@ export default function Home() {
             </div>
 
           </div>
+
         </div>
 
 
-        {/* =========================================================
+        {/* =====================================================
             NAVIGATION
-            ========================================================= */}
+            Shared animated underline
+        ===================================================== */}
         <nav
           className="
             absolute
@@ -315,131 +339,67 @@ export default function Home() {
             "
           >
 
-            {/* =================================================
-                ABOUT
-                ================================================= */}
-            <button
-              type="button"
-              onClick={() => scrollToSection("about")}
-              className={`
-                relative
-                text-[12px]
-                sm:text-[14px]
-                md:text-[16px]
-                pb-2
-                whitespace-nowrap
-                transition-colors
-                ${
-                  activeSection === "about"
-                    ? "text-[#111]"
-                    : "text-gray-500 hover:text-[#111]"
-                }
-              `}
-            >
-              About
+            {navItems.map((item) => {
+              const isActive = activeSection === item.id;
 
-              {activeSection === "about" && (
-                <span
-                  className="
-                    absolute
-                    left-0
-                    bottom-0
-                    w-5
-                    sm:w-6
-                    h-[2px]
-                    bg-[#F4B400]
-                  "
-                />
-              )}
-            </button>
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => scrollToSection(item.id)}
+                  className={`
+                    relative
+                    pb-2
+                    whitespace-nowrap
+                    text-[12px]
+                    sm:text-[14px]
+                    md:text-[16px]
+                    transition-colors
+                    duration-200
+                    ${
+                      isActive
+                        ? "text-[#111]"
+                        : "text-gray-500 hover:text-[#111]"
+                    }
+                  `}
+                >
+                  {item.label}
 
-
-            {/* =================================================
-                PROJECTS
-                ================================================= */}
-            <button
-              type="button"
-              onClick={() => scrollToSection("projects")}
-              className={`
-                relative
-                text-[12px]
-                sm:text-[14px]
-                md:text-[16px]
-                pb-2
-                whitespace-nowrap
-                transition-colors
-                ${
-                  activeSection === "projects"
-                    ? "text-[#111]"
-                    : "text-gray-500 hover:text-[#111]"
-                }
-              `}
-            >
-              Projects
-
-              {activeSection === "projects" && (
-                <span
-                  className="
-                    absolute
-                    left-0
-                    bottom-0
-                    w-5
-                    sm:w-6
-                    h-[2px]
-                    bg-[#F4B400]
-                  "
-                />
-              )}
-            </button>
-
-
-            {/* =================================================
-                EDUCATION
-                ================================================= */}
-            <button
-              type="button"
-              onClick={() => scrollToSection("education")}
-              className={`
-                relative
-                text-[12px]
-                sm:text-[14px]
-                md:text-[16px]
-                pb-2
-                whitespace-nowrap
-                transition-colors
-                ${
-                  activeSection === "education"
-                    ? "text-[#111]"
-                    : "text-gray-500 hover:text-[#111]"
-                }
-              `}
-            >
-              Education
-
-              {activeSection === "education" && (
-                <span
-                  className="
-                    absolute
-                    left-0
-                    bottom-0
-                    w-5
-                    sm:w-6
-                    h-[2px]
-                    bg-[#F4B400]
-                  "
-                />
-              )}
-            </button>
+                  {isActive && (
+                    <motion.span
+                      layoutId="active-navigation-underline"
+                      className="
+                        absolute
+                        left-0
+                        bottom-0
+                        w-5
+                        sm:w-6
+                        h-[2px]
+                        rounded-full
+                        bg-[#F4B400]
+                      "
+                      transition={{
+                        type: "spring",
+                        stiffness: 500,
+                        damping: 38,
+                        mass: 0.55,
+                      }}
+                    />
+                  )}
+                </button>
+              );
+            })}
 
           </div>
+
         </nav>
 
       </header>
 
 
-      {/* =========================================================
+      {/* =====================================================
           HERO
-      ========================================================= */}
+      ===================================================== */}
       <section
         id="about"
         className="
@@ -577,14 +537,15 @@ export default function Home() {
             </div>
 
           </div>
+
         </div>
 
       </section>
 
 
-      {/* =========================================================
+      {/* =====================================================
           PROJECTS
-      ========================================================= */}
+      ===================================================== */}
       <section
         id="projects"
         className="
@@ -683,7 +644,7 @@ export default function Home() {
           </Link>
 
 
-          {/* Placeholder / Second Project */}
+          {/* More Projects */}
           <div
             className="
               rounded-3xl
@@ -724,9 +685,9 @@ export default function Home() {
       </section>
 
 
-      {/* =========================================================
+      {/* =====================================================
           EDUCATION
-      ========================================================= */}
+      ===================================================== */}
       <section
         id="education"
         className="
@@ -777,9 +738,9 @@ export default function Home() {
       </section>
 
 
-      {/* =========================================================
+      {/* =====================================================
           FOOTER
-      ========================================================= */}
+      ===================================================== */}
       <footer className="max-w-6xl mx-auto px-5 sm:px-6 py-10 sm:py-12">
 
         <div className="flex flex-col sm:flex-row justify-between gap-6">
