@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [scrollY, setScrollY] = useState(0);
+  const [activeSection, setActiveSection] = useState("about");
 
   useEffect(() => {
     let ticking = false;
@@ -24,6 +25,40 @@ export default function Home() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  /*
+    Keep the navigation indicator synchronized with the
+    section currently visible on the page.
+  */
+  useEffect(() => {
+    const sections = ["about", "projects", "education"];
+
+    const handleSectionScroll = () => {
+      const checkpoint = window.scrollY + 140;
+
+      let currentSection = "about";
+
+      for (const id of sections) {
+        const section = document.getElementById(id);
+
+        if (section && section.offsetTop <= checkpoint) {
+          currentSection = id;
+        }
+      }
+
+      setActiveSection(currentSection);
+    };
+
+    handleSectionScroll();
+
+    window.addEventListener("scroll", handleSectionScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleSectionScroll);
     };
   }, []);
 
@@ -59,6 +94,8 @@ export default function Home() {
     if (!element) return;
 
     if (id === "about") {
+      setActiveSection("about");
+
       window.scrollTo({
         top: 0,
         behavior: "smooth",
@@ -66,6 +103,8 @@ export default function Home() {
 
       return;
     }
+
+    setActiveSection(id);
 
     const headerOffset = 82;
 
@@ -248,8 +287,7 @@ export default function Home() {
 
         {/* =========================================================
             NAVIGATION
-            Moves into Portfolio's position as you scroll
-        ========================================================= */}
+            ========================================================= */}
         <nav
           className="
             absolute
@@ -277,71 +315,120 @@ export default function Home() {
             "
           >
 
-            {/* About */}
+            {/* =================================================
+                ABOUT
+                ================================================= */}
             <button
               type="button"
               onClick={() => scrollToSection("about")}
-              className="
+              className={`
                 relative
                 text-[12px]
                 sm:text-[14px]
                 md:text-[16px]
-                text-[#111]
                 pb-2
                 whitespace-nowrap
-              "
+                transition-colors
+                ${
+                  activeSection === "about"
+                    ? "text-[#111]"
+                    : "text-gray-500 hover:text-[#111]"
+                }
+              `}
             >
               About
 
-              <span
-                className="
-                  absolute
-                  left-0
-                  bottom-0
-                  w-5
-                  sm:w-6
-                  h-[2px]
-                  bg-[#F4B400]
-                "
-              />
+              {activeSection === "about" && (
+                <span
+                  className="
+                    absolute
+                    left-0
+                    bottom-0
+                    w-5
+                    sm:w-6
+                    h-[2px]
+                    bg-[#F4B400]
+                  "
+                />
+              )}
             </button>
 
 
-            {/* Projects */}
+            {/* =================================================
+                PROJECTS
+                ================================================= */}
             <button
               type="button"
               onClick={() => scrollToSection("projects")}
-              className="
+              className={`
+                relative
                 text-[12px]
                 sm:text-[14px]
                 md:text-[16px]
-                text-gray-500
-                hover:text-[#111]
-                transition-colors
                 pb-2
                 whitespace-nowrap
-              "
+                transition-colors
+                ${
+                  activeSection === "projects"
+                    ? "text-[#111]"
+                    : "text-gray-500 hover:text-[#111]"
+                }
+              `}
             >
               Projects
+
+              {activeSection === "projects" && (
+                <span
+                  className="
+                    absolute
+                    left-0
+                    bottom-0
+                    w-5
+                    sm:w-6
+                    h-[2px]
+                    bg-[#F4B400]
+                  "
+                />
+              )}
             </button>
 
 
-            {/* Education */}
+            {/* =================================================
+                EDUCATION
+                ================================================= */}
             <button
               type="button"
               onClick={() => scrollToSection("education")}
-              className="
+              className={`
+                relative
                 text-[12px]
                 sm:text-[14px]
                 md:text-[16px]
-                text-gray-500
-                hover:text-[#111]
-                transition-colors
                 pb-2
                 whitespace-nowrap
-              "
+                transition-colors
+                ${
+                  activeSection === "education"
+                    ? "text-[#111]"
+                    : "text-gray-500 hover:text-[#111]"
+                }
+              `}
             >
               Education
+
+              {activeSection === "education" && (
+                <span
+                  className="
+                    absolute
+                    left-0
+                    bottom-0
+                    w-5
+                    sm:w-6
+                    h-[2px]
+                    bg-[#F4B400]
+                  "
+                />
+              )}
             </button>
 
           </div>
@@ -523,9 +610,7 @@ export default function Home() {
 
         <div className="mt-10 sm:mt-12 grid md:grid-cols-2 gap-6 sm:gap-8">
 
-          {/* =====================================================
-              LIQUID MIXER
-          ===================================================== */}
+          {/* Liquid Mixer */}
           <Link
             href="/projects/liquid-mixer"
             className="
@@ -598,9 +683,7 @@ export default function Home() {
           </Link>
 
 
-          {/* =====================================================
-              SECOND PROJECT
-          ===================================================== */}
+          {/* Placeholder / Second Project */}
           <div
             className="
               rounded-3xl
