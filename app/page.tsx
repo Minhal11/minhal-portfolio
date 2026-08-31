@@ -1,461 +1,404 @@
-"use client";
+import Link from "next/link";
 
-import { useEffect, useRef, useState } from "react";
-
-const navItems = ["About", "Projects", "Education"];
-
-const projects = [
-  {
-    number: "01",
-    title: "Smart Industrial Liquid Mixer",
-    subtitle: "Industrial automation project for intelligent batch mixing",
-    description:
-      "Designed and developed a smart liquid mixing system capable of automated recipe control, process monitoring, and safe batch operations. Implemented using a LabVIEW digital twin, ESP32 hardware prototype, and web-based monitoring dashboard.",
-    tags: [
-      "LabVIEW",
-      "ESP32",
-      "Digital Twin",
-      "Process Control",
-      "Automation",
-      "Web Dashboard",
-    ],
-  },
-  {
-    number: "02",
-    title: "Smart Parking System",
-    subtitle:
-      "Industrial parking slot management using CODESYS logic control",
-    description:
-      "Developing a smart parking automation system with real-time slot indication and industrial control logic using CODESYS programming environment.",
-    tags: [
-      "CODESYS",
-      "PLC Logic",
-      "Automation",
-      "Sensors",
-      "Control Systems",
-    ],
-    status: "In Progress",
-  },
-];
-
-function useInView(threshold = 0.15) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-        }
-      },
-      { threshold }
-    );
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, [threshold]);
-
-  return { ref, inView };
-}
-
-function ProjectCard({
-  project,
-  index,
-}: {
-  project: (typeof projects)[number];
-  index: number;
-}) {
-  const { ref, inView } = useInView();
-
+export default function Home() {
   return (
-    <div
-      ref={ref}
-      className="flex gap-0 border-t border-[#E5E5E0] transition-all duration-700"
-      style={{
-        opacity: inView ? 1 : 0,
-        transform: inView ? "translateY(0)" : "translateY(28px)",
-        transitionDelay: `${index * 120}ms`,
-      }}
-    >
-      {/* Yellow accent */}
-      <div className="w-[3px] bg-[#F4B400] rounded-full mr-5 sm:mr-8 md:mr-10 my-6 self-stretch" />
+    <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
-      {/* Project content */}
-      <div className="flex-1 py-8 sm:py-10 pr-2 sm:pr-4 md:pr-16">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-          <div className="flex-1">
+      {/* Header */}
+      <header className="w-full">
+        <div className="max-w-6xl mx-auto px-6 py-8">
 
-            {/* Number + status */}
-            <div className="flex items-center gap-3 sm:gap-4 mb-3">
-              <span className="text-[12px] font-medium tracking-[0.2em] text-[#999]">
-                {project.number}
-              </span>
+          <div className="flex items-center justify-between">
 
-              {project.status && (
-                <span className="text-[10px] sm:text-[11px] font-medium tracking-[0.15em] text-[#F4B400] border border-[#F4B400]/40 px-2.5 py-0.5 rounded-full">
-                  {project.status}
-                </span>
-              )}
-            </div>
+            {/* Name */}
+            <Link
+              href="/"
+              className="text-lg font-semibold tracking-tight"
+            >
+              Minhal Rahman
+            </Link>
 
-            {/* Title */}
-            <h3 className="text-[22px] sm:text-[24px] md:text-[28px] font-bold tracking-[-0.5px] text-[#111] leading-tight">
-              {project.title}
-            </h3>
-
-            {/* Subtitle */}
-            <p className="mt-2 text-[13px] sm:text-[14px] text-[#888] font-medium tracking-wide leading-6">
-              {project.subtitle}
-            </p>
-
-            {/* Description */}
-            <p className="mt-4 text-[14px] sm:text-[15px] leading-7 text-[#666] max-w-xl">
-              {project.description}
-            </p>
-
-            {/* Tags */}
-            <div className="flex flex-wrap gap-2 mt-5">
-              {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="text-[11px] sm:text-[12px] font-medium text-[#555] border border-[#E0E0DA] px-3 py-1 rounded-full tracking-wide"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-
-            {/* Project buttons */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-5 mt-7">
-
-              <button
-                className="text-[12px] sm:text-[13px] font-medium text-[#111] border border-[#222] px-5 py-2 rounded-full hover:bg-[#111] hover:text-white transition duration-300"
+            {/* Portfolio */}
+            <div className="absolute left-1/2 -translate-x-1/2">
+              <Link
+                href="/"
+                className="text-4xl font-medium tracking-tight"
               >
-                View Details
-              </button>
+                Portfolio<span className="text-[#F4B400]">.</span>
+              </Link>
+            </div>
 
-              <button
-                className="text-[12px] sm:text-[13px] font-medium text-[#777] hover:text-[#111] transition duration-300 flex items-center gap-1.5"
+            {/* Social Icons */}
+            <div className="flex items-center gap-7 ml-auto">
+
+              {/* GitHub */}
+              <a
+                href="https://github.com/Minhal11"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="text-[#555] hover:text-[#111] transition"
               >
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="14"
-                  height="14"
+                  width="24"
+                  height="24"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
                 </svg>
+              </a>
 
-                GitHub
-              </button>
+              {/* LinkedIn */}
+              <a
+                href="https://www.linkedin.com/in/minhal-rahman/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="text-[#555] hover:text-[#111] transition"
+              >
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M4.98 3.5A2.49 2.49 0 1 1 5 8.48a2.49 2.49 0 0 1-.02-4.98ZM3 9.75h4V21H3V9.75Zm6.5 0h3.83v1.54h.05c.53-1 1.84-2.05 3.79-2.05 4.05 0 4.8 2.66 4.8 6.12V21h-4v-4.99c0-1.19-.02-2.72-1.66-2.72-1.66 0-1.91 1.3-1.91 2.64V21h-4V9.75Z" />
+                </svg>
+              </a>
+
+              {/* Email */}
+              <a
+                href="mailto:minhalrahman21@gmail.com"
+                aria-label="Email"
+                className="text-[#555] hover:text-[#111] transition"
+              >
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="5" width="18" height="14" rx="2" />
+                  <path d="m3 7 9 6 9-6" />
+                </svg>
+              </a>
 
             </div>
-
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-export default function Home() {
-  const [active, setActive] = useState("About");
-  const [hovered, setHovered] = useState<string | null>(null);
+          {/* Navigation */}
+          <nav className="flex justify-center gap-14 mt-12">
 
-  const projectsRef = useRef<HTMLElement>(null);
-  const educationRef = useRef<HTMLElement>(null);
-
-  const scrollTo = (section: string) => {
-    setActive(section);
-
-    if (section === "Projects") {
-      projectsRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-
-    if (section === "Education") {
-      educationRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-
-    if (section === "About") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    }
-  };
-
-  const { ref: sectionLabelRef, inView: sectionLabelInView } = useInView();
-
-  return (
-    <main className="min-h-screen w-full overflow-x-hidden bg-[#F8F8F5] text-[#111111]">
-
-      {/* =========================================================
-          HEADER
-      ========================================================= */}
-
-      <header className="relative flex items-center justify-between px-5 sm:px-8 md:px-16 py-6 md:py-8">
-
-        {/* Name */}
-        <h2 className="text-[14px] sm:text-[15px] font-semibold tracking-wide text-[#111] whitespace-nowrap">
-          Minhal Rahman
-        </h2>
-
-        {/* Portfolio logo */}
-        <div className="absolute left-1/2 -translate-x-1/2">
-          <h1 className="text-[24px] sm:text-[28px] md:text-[32px] font-medium tracking-tight whitespace-nowrap">
-            Portfolio<span className="text-[#F4B400]">.</span>
-          </h1>
-        </div>
-
-        {/* Social icons */}
-        <div className="flex items-center gap-4 sm:gap-7">
-
-          {/* GitHub */}
-          <button
-            aria-label="GitHub"
-            className="text-[#555] hover:text-[#F4B400] transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
+            <a
+              href="#about"
+              className="relative text-[16px] text-[#111] pb-3"
             >
-              <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.385-1.335-1.755-1.335-1.755-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.605-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12z" />
-            </svg>
-          </button>
+              About
+              <span className="absolute left-0 bottom-0 w-6 h-[2px] bg-[#F4B400]" />
+            </a>
 
-          {/* LinkedIn */}
-          <button
-            aria-label="LinkedIn"
-            className="text-[#555] hover:text-[#F4B400] transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="currentColor"
+            <a
+              href="#projects"
+              className="text-[16px] text-gray-500 hover:text-[#111] transition pb-3"
             >
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452z" />
-            </svg>
-          </button>
+              Projects
+            </a>
 
-          {/* Email */}
-          <button
-            aria-label="Email"
-            className="text-[#555] hover:text-[#F4B400] transition duration-300"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            <a
+              href="#education"
+              className="text-[16px] text-gray-500 hover:text-[#111] transition pb-3"
             >
-              <rect width="20" height="16" x="2" y="4" rx="2" />
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-            </svg>
-          </button>
+              Education
+            </a>
+
+          </nav>
 
         </div>
       </header>
 
 
-      {/* =========================================================
-          NAVIGATION
-      ========================================================= */}
+      {/* Hero */}
+      <section
+        id="about"
+        className="min-h-[650px] flex items-center"
+      >
+        <div className="max-w-6xl mx-auto px-6 w-full">
 
-      <div className="flex justify-center mt-1 sm:mt-2 px-4">
+          <div className="text-center max-w-4xl mx-auto">
 
-        <div className="flex items-center justify-center gap-6 sm:gap-10 md:gap-14 text-[14px] sm:text-[15px] text-[#666]">
+            <h1 className="text-6xl sm:text-7xl md:text-8xl font-black tracking-[-4px] leading-[0.95]">
+              Hi, I&apos;m Minhal
+            </h1>
 
-          {navItems.map((item) => {
-            const isActive = active === item;
-            const isHovered = hovered === item;
-            const showLine = isActive || isHovered;
+            <h2 className="mt-8 text-2xl sm:text-3xl md:text-4xl font-medium tracking-tight">
+              Automation &amp; Instrumentation Engineer
+            </h2>
 
-            return (
-              <button
-                key={item}
-                onClick={() => scrollTo(item)}
-                onMouseEnter={() => setHovered(item)}
-                onMouseLeave={() => setHovered(null)}
-                className="relative pb-2 text-[14px] sm:text-[15px] whitespace-nowrap transition-colors duration-200"
-                style={{
-                  color: isActive ? "#111111" : "#666666",
-                }}
+            <p className="mt-8 text-lg md:text-xl text-gray-500 leading-9 max-w-3xl mx-auto">
+              Aspiring Automation &amp; Instrumentation Engineer focused on
+              industrial control systems, process automation, and engineering
+              innovation.
+            </p>
+
+            {/* Buttons */}
+            <div className="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+
+              <a
+                href="#projects"
+                className="
+                  w-full
+                  sm:w-auto
+                  bg-[#111]
+                  text-white
+                  px-8
+                  py-4
+                  rounded-full
+                  text-[14px]
+                  font-medium
+                  hover:bg-[#2a2a2a]
+                  transition
+                "
               >
-                {isActive ? (
-                  <span className="font-medium">{item}</span>
-                ) : (
-                  item
-                )}
+                View Projects
+              </a>
 
-                <span
-                  className="absolute left-0 bottom-0 h-[2px] bg-[#F4B400] rounded-full"
-                  style={{
-                    width: showLine ? "24px" : "0px",
-                    transition:
-                      "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  }}
-                />
-              </button>
-            );
-          })}
+              {/* DOWNLOAD RESUME */}
+              <a
+                href="/resume.pdf"
+                download="Minhal_Rahman_Resume.pdf"
+                className="
+                  w-full
+                  sm:w-auto
+                  border
+                  border-[#DDD]
+                  px-8
+                  py-4
+                  rounded-full
+                  text-[14px]
+                  font-medium
+                  hover:border-[#111]
+                  transition
+                "
+              >
+                Download Resume
+              </a>
+
+            </div>
+
+          </div>
 
         </div>
-      </div>
+      </section>
 
 
-      {/* =========================================================
-          HERO
-      ========================================================= */}
+      {/* Projects */}
+      <section
+        id="projects"
+        className="max-w-6xl mx-auto px-6 py-24"
+      >
 
-      <section className="flex flex-col items-center justify-center text-center px-5 sm:px-6 pt-24 sm:pt-28 md:pt-40 pb-20 md:pb-24">
-
-        {/* Heading */}
-        <h1 className="text-[46px] sm:text-[58px] md:text-[78px] font-black tracking-[-2px] sm:tracking-[-2.5px] md:tracking-[-3px] leading-[0.98] md:leading-[0.95] text-[#111111]">
-          Hi, I'm Minhal
-        </h1>
-
-        {/* Job title */}
-        <h2 className="mt-5 max-w-[340px] sm:max-w-none text-[20px] sm:text-[22px] md:text-[28px] leading-tight font-medium tracking-[-0.5px] md:tracking-[-1px] text-[#222222]">
-          Automation & Instrumentation Engineer
-        </h2>
-
-        {/* Description */}
-        <p className="mt-4 max-w-[340px] sm:max-w-xl md:max-w-2xl text-[16px] sm:text-[17px] md:text-[18px] leading-7 sm:leading-8 md:leading-[1.8] text-[#666666]">
-          Aspiring Automation & Instrumentation Engineer focused on
-          industrial control systems, process automation, and engineering
-          innovation.
+        <p className="text-[12px] tracking-[4px] text-gray-400 uppercase">
+          Selected Works
         </p>
 
+        <h2 className="mt-4 text-4xl md:text-5xl font-bold">
+          Projects
+        </h2>
 
-        {/* =====================================================
-            HERO BUTTONS
-            ===================================================== */}
+        <div className="mt-12 grid md:grid-cols-2 gap-8">
 
-        <div className="mt-8 flex flex-col sm:flex-row items-center gap-3 sm:gap-5 w-full sm:w-auto">
-
-          {/* View Projects */}
-          <button
-            onClick={() => scrollTo("Projects")}
-            className="w-[calc(100%-32px)] sm:w-auto bg-[#111] text-white px-8 py-3.5 rounded-full text-[14px] font-medium hover:opacity-80 transition"
+          {/* Liquid Mixer */}
+          <Link
+            href="/projects/liquid-mixer"
+            className="
+              group
+              rounded-3xl
+              border
+              border-[#E5E5E0]
+              bg-white
+              overflow-hidden
+              hover:-translate-y-1
+              transition
+            "
           >
-            View Projects
-          </button>
+
+            <div className="aspect-[16/10] overflow-hidden bg-[#F2F2ED]">
+              <img
+                src="/images/liquid-mixer-prototype.jpg"
+                alt="Smart Industrial Liquid Mixer"
+                className="
+                  w-full
+                  h-full
+                  object-cover
+                  group-hover:scale-[1.03]
+                  transition
+                  duration-500
+                "
+              />
+            </div>
+
+            <div className="p-7">
+
+              <p className="text-xs uppercase tracking-[3px] text-gray-400">
+                Automation &amp; Instrumentation
+              </p>
+
+              <h3 className="mt-3 text-2xl font-bold">
+                Smart Industrial Liquid Mixer
+              </h3>
+
+              <p className="mt-3 text-gray-500 leading-7">
+                Recipe-based liquid dosing and mixing system developed using
+                LabVIEW, ESP32 and a web dashboard.
+              </p>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+
+                <span className="px-3 py-1 rounded-full bg-[#F5F5F1] text-xs">
+                  LabVIEW
+                </span>
+
+                <span className="px-3 py-1 rounded-full bg-[#F5F5F1] text-xs">
+                  ESP32
+                </span>
+
+                <span className="px-3 py-1 rounded-full bg-[#F5F5F1] text-xs">
+                  Automation
+                </span>
+
+              </div>
+
+            </div>
+
+          </Link>
 
 
-          {/* =================================================
-              DOWNLOAD RESUME
-
-              The PDF physically exists at:
-              public/resume.pdf
-
-              The API route forces the downloaded filename to:
-              Minhal_Rahman_Resume.pdf
-              ================================================= */}
-
-          <a
-            href="/api/resume"
-            className="w-[calc(100%-32px)] sm:w-auto border border-[#DDD] px-8 py-3.5 rounded-full text-[14px] font-medium hover:border-[#111] transition flex items-center justify-center"
+          {/* Placeholder / Second Project */}
+          <div
+            className="
+              rounded-3xl
+              border
+              border-[#E5E5E0]
+              bg-white
+              p-8
+              flex
+              items-center
+              justify-center
+              min-h-[420px]
+            "
           >
-            Download Resume
-          </a>
+
+            <div className="text-center">
+
+              <p className="text-xs uppercase tracking-[3px] text-gray-400">
+                More Projects
+              </p>
+
+              <h3 className="mt-4 text-2xl font-bold">
+                Coming Soon
+              </h3>
+
+              <p className="mt-3 text-gray-500">
+                More engineering and automation projects will be added here.
+              </p>
+
+            </div>
+
+          </div>
 
         </div>
 
       </section>
 
 
-      {/* =========================================================
-          PROJECTS
-      ========================================================= */}
-
+      {/* Education */}
       <section
-        ref={projectsRef}
-        className="max-w-5xl mx-auto px-5 sm:px-8 md:px-16 pb-24 md:pb-28"
+        id="education"
+        className="bg-white border-t border-[#EAEAE5]"
       >
 
-        {/* Section heading */}
-        <div
-          ref={sectionLabelRef}
-          className="mb-10 sm:mb-12 transition-all duration-700"
-          style={{
-            opacity: sectionLabelInView ? 1 : 0,
-            transform: sectionLabelInView
-              ? "translateY(0)"
-              : "translateY(20px)",
-          }}
-        >
-          <p className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] text-[#999] uppercase mb-3">
-            Selected Works
+        <div className="max-w-6xl mx-auto px-6 py-24">
+
+          <p className="text-[12px] tracking-[4px] text-gray-400 uppercase">
+            Academic Background
           </p>
 
-          <h2 className="text-[28px] sm:text-[30px] md:text-[34px] font-bold tracking-[-0.5px] text-[#111]">
-            Projects<span className="text-[#F4B400]">.</span>
+          <h2 className="mt-4 text-4xl md:text-5xl font-bold">
+            Education
           </h2>
 
-          <p className="mt-2 text-[14px] sm:text-[15px] text-[#888] max-w-lg leading-6">
-            Focused on industrial automation, control systems and intelligent
-            engineering.
+          <div className="mt-12">
+
+            <div className="border-l-2 border-[#F4B400] pl-6">
+
+              <p className="text-sm text-gray-400">
+                B.Tech
+              </p>
+
+              <h3 className="mt-2 text-2xl font-bold">
+                Electronics &amp; Instrumentation Engineering
+              </h3>
+
+              <p className="mt-2 text-gray-500">
+                Focused on industrial automation, control systems,
+                instrumentation and process engineering.
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      {/* Footer */}
+      <footer className="max-w-6xl mx-auto px-6 py-12">
+
+        <div className="flex flex-col sm:flex-row justify-between gap-6">
+
+          <p className="text-sm text-gray-400">
+            © 2026 Minhal Rahman
           </p>
+
+          <div className="flex gap-6">
+
+            <a
+              href="https://github.com/Minhal11"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-400 hover:text-[#111] transition"
+            >
+              GitHub
+            </a>
+
+            <a
+              href="https://www.linkedin.com/in/minhal-rahman/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-gray-400 hover:text-[#111] transition"
+            >
+              LinkedIn
+            </a>
+
+            <a
+              href="mailto:minhalrahman21@gmail.com"
+              className="text-sm text-gray-400 hover:text-[#111] transition"
+            >
+              Email
+            </a>
+
+          </div>
+
         </div>
 
-
-        {/* Project cards */}
-        <div className="flex flex-col">
-
-          {projects.map((project, index) => (
-            <ProjectCard
-              key={project.number}
-              project={project}
-              index={index}
-            />
-          ))}
-
-          <div className="border-t border-[#E5E5E0]" />
-
-        </div>
-
-      </section>
-
-
-      {/* =========================================================
-          EDUCATION
-      ========================================================= */}
-
-      <section
-        ref={educationRef}
-        className="max-w-5xl mx-auto px-5 sm:px-8 md:px-16 pb-24 md:pb-28"
-      >
-
-        <p className="text-[10px] sm:text-[11px] font-medium tracking-[0.25em] text-[#999] uppercase mb-3">
-          Background
-        </p>
-
-        <h2 className="text-[28px] sm:text-[30px] md:text-[34px] font-bold tracking-[-0.5px] text-[#111]">
-          Education<span className="text-[#F4B400]">.</span>
-        </h2>
-
-      </section>
+      </footer>
 
     </main>
   );
