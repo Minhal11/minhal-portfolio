@@ -402,23 +402,28 @@ export default function Home() {
             View Projects
           </button>
 
-          <button
-            className="
-              w-full
-              sm:w-auto
-              border
-              border-[#DDD]
-              px-8
-              py-4
-              rounded-full
-              text-[14px]
-              font-medium
-              hover:border-[#111]
-              transition
-            "
-          >
-            Download Resume
-          </button>
+       <a
+         href="/resume.pdf"
+         download="Minhal_Rahman_Resume.pdf"
+  className="
+    w-full
+    sm:w-auto
+    border
+    border-[#DDD]
+    px-8
+    py-4
+    rounded-full
+    text-[14px]
+    font-medium
+    hover:border-[#111]
+    transition
+    inline-flex
+    items-center
+    justify-center
+  "
+>
+  Download Resume
+</a>
         </div>
       </section>
 
