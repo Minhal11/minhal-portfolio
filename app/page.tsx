@@ -14,91 +14,93 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState("about");
 
   /* =========================================================
-     SCROLL POSITION
+     SCROLL POSITION + ACTIVE SECTION
   ========================================================= */
 
   useEffect(() => {
     let ticking = false;
 
+    const updateScrollState = () => {
+      const currentScroll = window.scrollY;
+
+      setScrollY(currentScroll);
+
+      /*
+        Determine which section is currently active.
+
+        We use a fixed checkpoint rather than IntersectionObserver
+        so the active indicator doesn't flicker during smooth scroll.
+      */
+      const checkpoint = currentScroll + 180;
+
+      let currentSection = "about";
+
+      for (const item of navItems) {
+        const section = document.getElementById(item.id);
+
+        if (
+          section &&
+          section.offsetTop <= checkpoint
+        ) {
+          currentSection = item.id;
+        }
+      }
+
+      setActiveSection(currentSection);
+
+      ticking = false;
+    };
+
     const handleScroll = () => {
       if (!ticking) {
-        window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY);
-          ticking = false;
-        });
-
+        window.requestAnimationFrame(updateScrollState);
         ticking = true;
       }
     };
+
+    updateScrollState();
 
     window.addEventListener("scroll", handleScroll, {
       passive: true,
     });
 
+    window.addEventListener("resize", updateScrollState);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateScrollState);
     };
   }, []);
 
 
   /* =========================================================
-     ACTIVE SECTION
+     HEADER COLLAPSE
      
-     Detects which section is currently being viewed.
-  ========================================================= */
-
-  useEffect(() => {
-    const sections = navItems
-      .map((item) => document.getElementById(item.id))
-      .filter((section): section is HTMLElement => section !== null);
-
-    if (!sections.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visibleSections = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort(
-            (a, b) =>
-              a.boundingClientRect.top -
-              b.boundingClientRect.top
-          );
-
-        if (visibleSections.length > 0) {
-          setActiveSection(visibleSections[0].target.id);
-        }
-      },
-      {
-        root: null,
-        rootMargin: "-120px 0px -50% 0px",
-        threshold: 0,
-      }
-    );
-
-    sections.forEach((section) => {
-      observer.observe(section);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-
-  /* =========================================================
-     HEADER SCROLL ANIMATION
-     
-     IMPORTANT:
-     Header height stays completely fixed.
+     The header itself NEVER changes height.
      Only Portfolio and Navigation move internally.
   ========================================================= */
 
-  const collapseProgress = Math.min(scrollY / 140, 1);
+  const collapseProgress = Math.min(
+    scrollY / 140,
+    1
+  );
 
-  const portfolioY = -(collapseProgress * 54);
-  const portfolioOpacity = 1 - collapseProgress;
+  /*
+    Portfolio moves upward and fades away.
+  */
+  const portfolioY =
+    -(collapseProgress * 54);
 
-  const navigationY = -(collapseProgress * 47);
+  const portfolioOpacity =
+    1 - collapseProgress;
+
+
+  /*
+    Navigation starts underneath Portfolio
+    and moves into its position.
+  */
+  const navigationY =
+    -(collapseProgress * 47);
 
 
   /* =========================================================
@@ -117,7 +119,8 @@ export default function Home() {
       return;
     }
 
-    const element = document.getElementById(id);
+    const element =
+      document.getElementById(id);
 
     if (!element) return;
 
@@ -129,25 +132,20 @@ export default function Home() {
       element.getBoundingClientRect().top +
       window.scrollY;
 
-    const offsetPosition = Math.max(
+    const targetPosition = Math.max(
       elementPosition - headerOffset,
       0
     );
 
     window.scrollTo({
-      top: offsetPosition,
+      top: targetPosition,
       behavior: "smooth",
     });
   };
 
 
   /* =========================================================
-     UNDERLINE POSITION
-     
-     The navigation uses equal-width slots.
-     Therefore the underline can animate ONLY horizontally.
-     
-     This completely removes the vertical jump.
+     ACTIVE NAVIGATION INDEX
   ========================================================= */
 
   const activeIndex = Math.max(
@@ -158,12 +156,29 @@ export default function Home() {
   );
 
 
+  /*
+    The nav has 3 equal columns.
+
+    The underline is positioned at the CENTER
+    of the active column.
+
+    This means it is always centered under the
+    corresponding text on every screen size.
+  */
+  const underlineLeft =
+    `${((activeIndex + 0.5) / navItems.length) * 100}%`;
+
+
   return (
     <main className="min-h-screen bg-[#F8F8F5] text-[#111111]">
 
-
       {/* =========================================================
           FIXED HEADER
+
+          Minimal
+          Futuristic
+          No blur
+          No separator line
       ========================================================= */}
 
       <header
@@ -207,14 +222,16 @@ export default function Home() {
 
             {/* =================================================
                 NAME
-                STAYS COMPLETELY FIXED
+                NEVER MOVES
             ================================================= */}
 
             <div className="justify-self-start min-w-0">
 
               <button
                 type="button"
-                onClick={() => scrollToSection("about")}
+                onClick={() =>
+                  scrollToSection("about")
+                }
                 className="
                   text-[14px]
                   sm:text-[15px]
@@ -234,7 +251,7 @@ export default function Home() {
 
             {/* =================================================
                 PORTFOLIO
-                SCROLL-LINKED
+                SCROLL LINKED
             ================================================= */}
 
             <div
@@ -243,14 +260,18 @@ export default function Home() {
                 will-change-transform
               "
               style={{
-                transform: `translateY(${portfolioY}px)`,
-                opacity: portfolioOpacity,
+                transform:
+                  `translateY(${portfolioY}px)`,
+                opacity:
+                  portfolioOpacity,
               }}
             >
 
               <button
                 type="button"
-                onClick={() => scrollToSection("about")}
+                onClick={() =>
+                  scrollToSection("about")
+                }
                 className="
                   text-[24px]
                   sm:text-[28px]
@@ -260,7 +281,10 @@ export default function Home() {
                   whitespace-nowrap
                 "
               >
-                Portfolio<span className="text-[#F4B400]">.</span>
+                Portfolio
+                <span className="text-[#F4B400]">
+                  .
+                </span>
               </button>
 
             </div>
@@ -268,7 +292,7 @@ export default function Home() {
 
             {/* =================================================
                 SOCIAL ICONS
-                STAY COMPLETELY FIXED
+                NEVER MOVE
             ================================================= */}
 
             <div
@@ -300,7 +324,7 @@ export default function Home() {
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
-                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2-.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
                 </svg>
               </a>
 
@@ -368,7 +392,10 @@ export default function Home() {
 
         {/* =====================================================
             NAVIGATION
-            ONLY HORIZONTAL UNDERLINE MOVEMENT
+
+            Equal-width columns
+            One shared underline
+            Underline moves horizontally only
         ===================================================== */}
 
         <nav
@@ -383,7 +410,8 @@ export default function Home() {
             will-change-transform
           "
           style={{
-            transform: `translateY(${navigationY}px)`,
+            transform:
+              `translateY(${navigationY}px)`,
           }}
         >
 
@@ -393,15 +421,11 @@ export default function Home() {
               grid
               grid-cols-3
               items-center
-              w-[210px]
-              sm:w-[270px]
+              w-[240px]
+              sm:w-[280px]
               md:w-[330px]
             "
           >
-
-            {/* =================================================
-                STATIC NAV ITEMS
-            ================================================= */}
 
             {navItems.map((item) => {
 
@@ -416,14 +440,15 @@ export default function Home() {
                     scrollToSection(item.id)
                   }
                   className={`
-                    relative
                     h-8
-                    text-center
+                    flex
+                    items-start
+                    justify-center
+                    pb-2
                     whitespace-nowrap
                     text-[12px]
                     sm:text-[14px]
                     md:text-[16px]
-                    pb-2
                     transition-colors
                     duration-200
                     ${
@@ -440,15 +465,16 @@ export default function Home() {
 
 
             {/* =================================================
-                SINGLE SHARED UNDERLINE
+                SHARED UNDERLINE
                  
-                This element NEVER animates vertically.
-                It only moves left/right.
+                Vertical position is locked permanently.
+                Only horizontal position changes.
             ================================================= */}
 
             <span
               aria-hidden="true"
               className="
+                pointer-events-none
                 absolute
                 bottom-0
                 left-0
@@ -457,13 +483,13 @@ export default function Home() {
                 h-[2px]
                 rounded-full
                 bg-[#F4B400]
-                pointer-events-none
-                transition-transform
+                -translate-x-1/2
+                transition-[left]
                 duration-500
                 ease-[cubic-bezier(0.22,1,0.36,1)]
               "
               style={{
-                transform: `translateX(calc(${activeIndex} * 70px + 23px))`,
+                left: underlineLeft,
               }}
             />
 
@@ -492,7 +518,15 @@ export default function Home() {
         "
       >
 
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 w-full">
+        <div
+          className="
+            max-w-6xl
+            mx-auto
+            px-5
+            sm:px-6
+            w-full
+          "
+        >
 
           <div className="text-center max-w-4xl mx-auto">
 
@@ -654,7 +688,14 @@ export default function Home() {
         </p>
 
 
-        <h2 className="mt-4 text-4xl sm:text-5xl font-bold">
+        <h2
+          className="
+            mt-4
+            text-4xl
+            sm:text-5xl
+            font-bold
+          "
+        >
           Projects
         </h2>
 
@@ -671,6 +712,7 @@ export default function Home() {
         >
 
           {/* Liquid Mixer */}
+
           <Link
             href="/projects/liquid-mixer"
             className="
@@ -686,7 +728,13 @@ export default function Home() {
             "
           >
 
-            <div className="aspect-[16/10] overflow-hidden bg-[#F2F2ED]">
+            <div
+              className="
+                aspect-[16/10]
+                overflow-hidden
+                bg-[#F2F2ED]
+              "
+            >
 
               <img
                 src="/images/liquid-mixer-prototype.jpg"
@@ -720,7 +768,14 @@ export default function Home() {
               </p>
 
 
-              <h3 className="mt-3 text-xl sm:text-2xl font-bold">
+              <h3
+                className="
+                  mt-3
+                  text-xl
+                  sm:text-2xl
+                  font-bold
+                "
+              >
                 Smart Industrial Liquid Mixer
               </h3>
 
@@ -741,15 +796,39 @@ export default function Home() {
 
               <div className="mt-5 flex flex-wrap gap-2">
 
-                <span className="px-3 py-1 rounded-full bg-[#F5F5F1] text-xs">
+                <span
+                  className="
+                    px-3
+                    py-1
+                    rounded-full
+                    bg-[#F5F5F1]
+                    text-xs
+                  "
+                >
                   LabVIEW
                 </span>
 
-                <span className="px-3 py-1 rounded-full bg-[#F5F5F1] text-xs">
+                <span
+                  className="
+                    px-3
+                    py-1
+                    rounded-full
+                    bg-[#F5F5F1]
+                    text-xs
+                  "
+                >
                   ESP32
                 </span>
 
-                <span className="px-3 py-1 rounded-full bg-[#F5F5F1] text-xs">
+                <span
+                  className="
+                    px-3
+                    py-1
+                    rounded-full
+                    bg-[#F5F5F1]
+                    text-xs
+                  "
+                >
                   Automation
                 </span>
 
@@ -761,6 +840,7 @@ export default function Home() {
 
 
           {/* More Projects */}
+
           <div
             className="
               rounded-3xl
@@ -778,7 +858,14 @@ export default function Home() {
 
             <div className="text-center">
 
-              <p className="text-xs uppercase tracking-[3px] text-gray-400">
+              <p
+                className="
+                  text-xs
+                  uppercase
+                  tracking-[3px]
+                  text-gray-400
+                "
+              >
                 More Projects
               </p>
 
@@ -840,21 +927,42 @@ export default function Home() {
           </p>
 
 
-          <h2 className="mt-4 text-4xl sm:text-5xl font-bold">
+          <h2
+            className="
+              mt-4
+              text-4xl
+              sm:text-5xl
+              font-bold
+            "
+          >
             Education
           </h2>
 
 
           <div className="mt-10 sm:mt-12">
 
-            <div className="border-l-2 border-[#F4B400] pl-5 sm:pl-6">
+            <div
+              className="
+                border-l-2
+                border-[#F4B400]
+                pl-5
+                sm:pl-6
+              "
+            >
 
               <p className="text-sm text-gray-400">
                 B.Tech
               </p>
 
 
-              <h3 className="mt-2 text-xl sm:text-2xl font-bold">
+              <h3
+                className="
+                  mt-2
+                  text-xl
+                  sm:text-2xl
+                  font-bold
+                "
+              >
                 Electronics &amp; Instrumentation Engineering
               </h3>
 
@@ -911,7 +1019,14 @@ export default function Home() {
           </p>
 
 
-          <div className="flex flex-wrap gap-5 sm:gap-6">
+          <div
+            className="
+              flex
+              flex-wrap
+              gap-5
+              sm:gap-6
+            "
+          >
 
             <a
               href="https://github.com/Minhal11"
