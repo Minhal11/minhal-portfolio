@@ -13,7 +13,6 @@ export default function Home() {
   const [scrollY, setScrollY] = useState(0);
   const [activeSection, setActiveSection] = useState("about");
   const [hoveredSection, setHoveredSection] = useState<string | null>(null);
-  const [isMobile, setIsMobile] = useState(false);
 
 
   /* =========================================================
@@ -107,34 +106,15 @@ export default function Home() {
 
 
   /* =========================================================
-     MOBILE BREAKPOINT
-
-     Mobile uses a slightly more spacious two-row header.
-     Desktop behavior remains unchanged.
-  ========================================================= */
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 639px)");
-
-    const updateMobileState = () => {
-      setIsMobile(mediaQuery.matches);
-    };
-
-    updateMobileState();
-
-    mediaQuery.addEventListener("change", updateMobileState);
-
-    return () => {
-      mediaQuery.removeEventListener("change", updateMobileState);
-    };
-  }, []);
-
-
-  /* =========================================================
      HEADER COLLAPSE
      
-     Header height stays constant.
-     Portfolio and navigation move internally.
+     DESKTOP:
+       Portfolio moves upward.
+       Navigation moves upward into its place.
+
+     MOBILE:
+       Portfolio stays completely static.
+       Navigation stays completely static.
   ========================================================= */
 
   const collapseProgress = Math.min(
@@ -142,9 +122,9 @@ export default function Home() {
     1
   );
 
-
   /*
-    Portfolio moves upward and fades away.
+    These values are used only by the DESKTOP header.
+    The mobile header uses separate static elements below.
   */
   const portfolioY =
     -(collapseProgress * 54);
@@ -152,21 +132,8 @@ export default function Home() {
   const portfolioOpacity =
     1 - collapseProgress;
 
-
-  /*
-    Navigation moves upward into the Portfolio position.
-  */
-  /*
-    Desktop:
-      navigation rises into Portfolio position.
-
-    Mobile:
-      navigation stays in its own compact row so the
-      name, social icons and navigation never collide.
-  */
-  const navigationY = isMobile
-    ? 0
-    : -(collapseProgress * 47);
+  const navigationY =
+    -(collapseProgress * 47);
 
 
   /* =========================================================
@@ -246,10 +213,9 @@ export default function Home() {
       {/* =========================================================
           FIXED HEADER
           
-          Minimal
-          Futuristic
-          No blur
-          No separator
+          Desktop and mobile use the same overall header,
+          but Portfolio and Navigation have separate
+          responsive versions.
       ========================================================= */}
 
       <header
@@ -261,9 +227,10 @@ export default function Home() {
           z-50
           w-full
           bg-[#F8F8F5]
-          h-[104px]
-          sm:h-[118px]
         "
+        style={{
+          height: "118px",
+        }}
       >
 
 
@@ -275,8 +242,7 @@ export default function Home() {
           className="
             max-w-6xl
             mx-auto
-            h-[56px]
-            sm:h-[68px]
+            h-[68px]
             px-4
             sm:px-6
             md:px-8
@@ -311,7 +277,7 @@ export default function Home() {
                   scrollToSection("about")
                 }
                 className="
-                  text-[12px]
+                  text-[14px]
                   sm:text-[15px]
                   md:text-lg
                   font-semibold
@@ -328,12 +294,16 @@ export default function Home() {
 
 
             {/* =================================================
-                PORTFOLIO
-                SCROLL LINKED
+                DESKTOP PORTFOLIO
+                 
+                Visible from sm and above.
+                Keeps the existing desktop scroll animation.
             ================================================= */}
 
             <div
               className="
+                hidden
+                sm:block
                 justify-self-center
                 will-change-transform
               "
@@ -351,9 +321,43 @@ export default function Home() {
                   scrollToSection("about")
                 }
                 className="
-                  text-[18px]
-                  sm:text-[28px]
+                  text-[28px]
                   md:text-4xl
+                  font-medium
+                  tracking-tight
+                  whitespace-nowrap
+                "
+              >
+                Portfolio
+                <span className="text-[#F4B400]">
+                  .
+                </span>
+              </button>
+
+            </div>
+
+
+            {/* =================================================
+                MOBILE PORTFOLIO
+                 
+                Completely static.
+                Never moves or fades.
+            ================================================= */}
+
+            <div
+              className="
+                sm:hidden
+                justify-self-center
+              "
+            >
+
+              <button
+                type="button"
+                onClick={() =>
+                  scrollToSection("about")
+                }
+                className="
+                  text-[24px]
                   font-medium
                   tracking-tight
                   whitespace-nowrap
@@ -378,7 +382,7 @@ export default function Home() {
                 justify-self-end
                 flex
                 items-center
-                gap-2
+                gap-3
                 sm:gap-5
                 md:gap-7
               "
@@ -406,7 +410,7 @@ export default function Home() {
                   fill="currentColor"
                 >
 
-                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c-3.2-.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
+                  <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2.15c0-.31-.2-.66-.79-.55C5.4 20.03 4.14 18.08 4.14 18.08c-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.71.08-.71 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.26-1.28-5.26-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.47.11-3.06 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.5 3.18-1.18 3.18-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.71 5.41-5.29 5.69.41.36.78 1.07.78 2.16v3.2c0 .31.2.66.79.55A11.52 11.52 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z" />
 
                 </svg>
 
@@ -486,22 +490,20 @@ export default function Home() {
 
 
         {/* =====================================================
-            NAVIGATION
-
-            Each word owns its own yellow cursor line.
-
-            There is NO shared underline travelling between
-            the words.
+            DESKTOP NAVIGATION
+             
+            Existing collapsing behavior.
+            Visible from sm and above.
         ===================================================== */}
 
         <nav
           className="
+            hidden
+            sm:flex
             absolute
             left-0
             right-0
-            top-[56px]
-            sm:top-[68px]
-            flex
+            top-[68px]
             justify-center
             px-4
             will-change-transform
@@ -520,8 +522,7 @@ export default function Home() {
               flex
               items-center
               justify-center
-              gap-4
-              sm:gap-8
+              gap-8
               md:gap-14
             "
           >
@@ -536,9 +537,8 @@ export default function Home() {
 
 
               /*
-                Hover temporarily takes visual priority.
-                When the cursor leaves the navigation,
-                the active section returns.
+                Hover temporarily takes priority.
+                Active section remains when pointer leaves.
               */
               const showLine =
                 isHovered ||
@@ -566,8 +566,7 @@ export default function Home() {
                     relative
                     pb-2
                     whitespace-nowrap
-                    text-[11px]
-                    sm:text-[14px]
+                    text-[14px]
                     md:text-[16px]
                     transition-colors
                     duration-200
@@ -580,20 +579,141 @@ export default function Home() {
                   `}
                 >
 
-                  <span className="relative inline-block">
+                  <span
+                    className="
+                      relative
+                      inline-block
+                    "
+                  >
 
                     {item.label}
 
 
-                    {/* =========================================
-                        INDIVIDUAL CURSOR LINE
+                    {/* Individual cursor line */}
 
-                        The line starts at the LEFT edge of
-                        this particular word and grows toward
-                        its center.
+                    <span
+                      aria-hidden="true"
+                      className={`
+                        absolute
+                        left-0
+                        bottom-[-2px]
+                        h-[2px]
+                        rounded-full
+                        bg-[#F4B400]
+                        origin-left
+                        transition-[width]
+                        duration-300
+                        ease-[cubic-bezier(0.22,1,0.36,1)]
+                        ${
+                          showLine
+                            ? "w-1/2"
+                            : "w-0"
+                        }
+                      `}
+                    />
 
-                        It never travels from another word.
-                    ========================================= */}
+                  </span>
+
+                </button>
+              );
+            })}
+
+          </div>
+
+        </nav>
+
+
+        {/* =====================================================
+            MOBILE NAVIGATION
+             
+            Completely static vertically.
+            This is the important mobile fix.
+        ===================================================== */}
+
+        <nav
+          className="
+            sm:hidden
+            absolute
+            left-0
+            right-0
+            top-[68px]
+            flex
+            justify-center
+            px-4
+          "
+          onMouseLeave={() =>
+            setHoveredSection(null)
+          }
+        >
+
+          <div
+            className="
+              flex
+              items-center
+              justify-center
+              gap-5
+            "
+          >
+
+            {navItems.map((item) => {
+
+              const isActive =
+                activeSection === item.id;
+
+              const isHovered =
+                hoveredSection === item.id;
+
+              /*
+                On touch screens there is normally no hover.
+                Active item therefore keeps its indicator.
+              */
+              const showLine =
+                isHovered ||
+                (isActive && !hoveredSection);
+
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() =>
+                    scrollToSection(item.id)
+                  }
+                  onMouseEnter={() =>
+                    setHoveredSection(item.id)
+                  }
+                  onFocus={() =>
+                    setHoveredSection(item.id)
+                  }
+                  onBlur={() =>
+                    setHoveredSection(null)
+                  }
+                  className={`
+                    group
+                    relative
+                    pb-2
+                    whitespace-nowrap
+                    text-[12px]
+                    ${
+                      isActive ||
+                      isHovered
+                        ? "text-[#111]"
+                        : "text-gray-500"
+                    }
+                  `}
+                >
+
+                  <span
+                    className="
+                      relative
+                      inline-block
+                    "
+                  >
+
+                    {item.label}
+
+
+                    {/* Individual cursor line */}
 
                     <span
                       aria-hidden="true"
@@ -636,11 +756,10 @@ export default function Home() {
       <section
         id="about"
         className="
-          min-h-[600px]
-          sm:min-h-[650px]
+          min-h-[650px]
           flex
           items-center
-          pt-[118px]
+          pt-[150px]
           sm:pt-[160px]
           md:pt-[175px]
           pb-20
