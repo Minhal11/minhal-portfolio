@@ -1099,148 +1099,60 @@ export default function Home() {
           </Link>
 
 
-          {/* Smart Warehouse Automation */}
+          {/* More Projects */}
 
-          <Link
-            href="/projects/smart-warehouse"
+          <div
             className="
-              group
               rounded-3xl
               border
               border-[#E5E5E0]
               bg-white
-              overflow-hidden
-              hover:-translate-y-1
-              transition-transform
-              duration-300
+              p-8
+              flex
+              items-center
+              justify-center
+              min-h-[360px]
+              md:min-h-[420px]
             "
           >
 
-            <div
-              className="
-                aspect-[16/10]
-                overflow-hidden
-                bg-[#F2F2ED]
-              "
-            >
-
-              <img
-                src="/images/warehouse-hero.jpg"
-                alt="PLC-Based Smart Warehouse Automation"
-                className="
-                  w-full
-                  h-full
-                  object-cover
-                  group-hover:scale-[1.03]
-                  transition-transform
-                  duration-500
-                "
-              />
-
-            </div>
-
-
-            <div className="p-6 sm:p-7">
+            <div className="text-center">
 
               <p
                 className="
-                  text-[11px]
-                  sm:text-xs
+                  text-xs
                   uppercase
-                  tracking-[2px]
-                  sm:tracking-[3px]
+                  tracking-[3px]
                   text-gray-400
                 "
               >
-                PLC Automation &amp; Digital Twin
+                More Projects
               </p>
 
 
               <h3
                 className="
-                  mt-3
-                  text-xl
-                  sm:text-2xl
+                  mt-4
+                  text-2xl
                   font-bold
                 "
               >
-                PLC-Based Smart Warehouse Automation
+                Coming Soon
               </h3>
 
 
               <p
                 className="
                   mt-3
-                  text-sm
-                  sm:text-base
                   text-gray-500
-                  leading-7
                 "
               >
-                CODESYS-controlled conveyor sorting system with product tracking,
-                automated routing, OPC UA communication and a 3D simulation environment.
+                More engineering and automation projects will be added here.
               </p>
-
-
-              <div className="mt-5 flex flex-wrap gap-2">
-
-                <span
-                  className="
-                    px-3
-                    py-1
-                    rounded-full
-                    bg-[#F5F5F1]
-                    text-xs
-                  "
-                >
-                  CODESYS
-                </span>
-
-
-                <span
-                  className="
-                    px-3
-                    py-1
-                    rounded-full
-                    bg-[#F5F5F1]
-                    text-xs
-                  "
-                >
-                  Structured Text
-                </span>
-
-
-                <span
-                  className="
-                    px-3
-                    py-1
-                    rounded-full
-                    bg-[#F5F5F1]
-                    text-xs
-                  "
-                >
-                  OPC UA
-                </span>
-
-
-                <span
-                  className="
-                    px-3
-                    py-1
-                    rounded-full
-                    bg-[#F5F5F1]
-                    text-xs
-                  "
-                >
-                  Godot
-                </span>
-
-              </div>
 
             </div>
 
-          </Link>
-
+          </div>
 
         </div>
 
