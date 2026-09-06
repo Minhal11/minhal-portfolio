@@ -949,7 +949,7 @@ export default function Home() {
         <h2
           className="
             mt-4
-            text-4xl
+            text-3xl
             sm:text-5xl
             font-bold
           "
@@ -963,8 +963,8 @@ export default function Home() {
             mt-10
             sm:mt-12
             grid
-            md:grid-cols-2
-            gap-6
+            grid-cols-2
+            gap-3
             sm:gap-8
           "
         >
@@ -975,7 +975,8 @@ export default function Home() {
             href="/projects/liquid-mixer"
             className="
               group
-              rounded-3xl
+              rounded-2xl
+              sm:rounded-3xl
               border
               border-[#E5E5E0]
               bg-white
@@ -1010,15 +1011,11 @@ export default function Home() {
             </div>
 
 
-            <div className="p-6 sm:p-7">
+            <div className="p-3.5 sm:p-7">
 
               <p
                 className="
-                  text-[11px]
-                  sm:text-xs
-                  uppercase
-                  tracking-[2px]
-                  sm:tracking-[3px]
+                  text-[8px] sm:text-xs uppercase tracking-[1.5px] sm:tracking-[3px]
                   text-gray-400
                 "
               >
@@ -1052,15 +1049,18 @@ export default function Home() {
               </p>
 
 
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-3 sm:mt-5 flex flex-wrap gap-1 sm:gap-2">
 
                 <span
                   className="
-                    px-3
+                    px-2
                     py-1
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[9px]
+                    sm:text-xs
                   "
                 >
                   LabVIEW
@@ -1069,11 +1069,14 @@ export default function Home() {
 
                 <span
                   className="
-                    px-3
+                    px-2
                     py-1
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[9px]
+                    sm:text-xs
                   "
                 >
                   ESP32
@@ -1105,7 +1108,8 @@ export default function Home() {
             href="/projects/smart-warehouse"
             className="
               group
-              rounded-3xl
+              rounded-2xl
+              sm:rounded-3xl
               border
               border-[#E5E5E0]
               bg-white
@@ -1140,15 +1144,11 @@ export default function Home() {
             </div>
 
 
-            <div className="p-6 sm:p-7">
+            <div className="p-3.5 sm:p-7">
 
               <p
                 className="
-                  text-[11px]
-                  sm:text-xs
-                  uppercase
-                  tracking-[2px]
-                  sm:tracking-[3px]
+                  text-[8px] sm:text-xs uppercase tracking-[1.5px] sm:tracking-[3px]
                   text-gray-400
                 "
               >
@@ -1182,7 +1182,7 @@ export default function Home() {
               </p>
 
 
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-3 sm:mt-5 flex flex-wrap gap-1 sm:gap-2">
 
                 <span
                   className="
@@ -1316,7 +1316,7 @@ export default function Home() {
                 border
                 border-[#E5E5E0]
                 bg-[#F8F8F5]
-                p-6
+                p-3.5
                 sm:p-7
                 md:p-8
               "
@@ -1422,7 +1422,7 @@ export default function Home() {
                       text-gray-400
                     "
                   >
-                    CGPA
+                    Academic Result
                   </p>
 
                   <p
@@ -1477,7 +1477,7 @@ export default function Home() {
                 border
                 border-[#E5E5E0]
                 bg-[#F8F8F5]
-                p-6
+                p-3.5
                 sm:p-7
                 md:p-8
               "
