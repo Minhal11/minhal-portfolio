@@ -121,9 +121,9 @@ function Gallery({ items }: { items: GalleryItem[] }) {
   const progress = ((index + 1) / items.length) * 100;
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E5E5E0] bg-white shadow-[0_10px_40px_rgba(17,17,17,0.035)] sm:rounded-[28px]">
+    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-[22px] border border-[#E5E5E0] bg-white shadow-[0_10px_40px_rgba(17,17,17,0.035)] sm:rounded-[28px]">
       <div className="bg-[#F8F8F5] px-2 pt-2 sm:px-4 sm:pt-4">
-        <div className="flex h-[175px] items-center justify-center overflow-hidden rounded-2xl bg-[#F2F2ED] sm:h-[300px] md:h-[360px]">
+        <div className="flex h-[210px] items-center justify-center overflow-hidden rounded-2xl bg-[#F2F2ED] sm:h-[300px] md:h-[360px]">
           <img
             src={current.image}
             alt={current.title}

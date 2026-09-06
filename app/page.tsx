@@ -989,7 +989,9 @@ export default function Home() {
 
             <div
               className="
-                aspect-[16/10]
+                h-[105px]
+                sm:aspect-[16/10]
+                sm:h-auto
                 overflow-hidden
                 bg-[#F2F2ED]
               "
@@ -1011,11 +1013,16 @@ export default function Home() {
             </div>
 
 
-            <div className="p-3.5 sm:p-7">
+            <div className="p-3 sm:p-7">
 
               <p
                 className="
-                  text-[8px] sm:text-xs uppercase tracking-[1.5px] sm:tracking-[3px]
+                  text-[7px]
+                  sm:text-xs
+                  uppercase
+                  tracking-[1.2px]
+                  sm:tracking-[3px]
+                  leading-3.5
                   text-gray-400
                 "
               >
@@ -1025,10 +1032,12 @@ export default function Home() {
 
               <h3
                 className="
-                  mt-3
-                  text-xl
+                  mt-2
+                  text-[13px]
                   sm:text-2xl
                   font-bold
+                  leading-[1.2]
+                  sm:leading-tight
                 "
               >
                 Smart Industrial Liquid Mixer
@@ -1037,11 +1046,13 @@ export default function Home() {
 
               <p
                 className="
-                  mt-3
-                  text-sm
+                  mt-2.5
+                  text-[8.5px]
                   sm:text-base
                   text-gray-500
-                  leading-7
+                  leading-[1.45]
+                  sm:leading-7
+                  line-clamp-3
                 "
               >
                 Recipe-based liquid dosing and mixing system developed using
@@ -1054,13 +1065,14 @@ export default function Home() {
                 <span
                   className="
                     px-2
-                    py-1
+                    py-0.5
                     sm:px-3
                     sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-[9px]
+                    text-[8px]
                     sm:text-xs
+                    leading-none
                   "
                 >
                   LabVIEW
@@ -1070,13 +1082,14 @@ export default function Home() {
                 <span
                   className="
                     px-2
-                    py-1
+                    py-0.5
                     sm:px-3
                     sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-[9px]
+                    text-[8px]
                     sm:text-xs
+                    leading-none
                   "
                 >
                   ESP32
@@ -1085,11 +1098,15 @@ export default function Home() {
 
                 <span
                   className="
-                    px-3
-                    py-1
+                    px-2
+                    py-0.5
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[8px]
+                    sm:text-xs
+                    leading-none
                   "
                 >
                   Automation
@@ -1122,7 +1139,9 @@ export default function Home() {
 
             <div
               className="
-                aspect-[16/10]
+                h-[105px]
+                sm:aspect-[16/10]
+                sm:h-auto
                 overflow-hidden
                 bg-[#F2F2ED]
               "
@@ -1144,11 +1163,16 @@ export default function Home() {
             </div>
 
 
-            <div className="p-3.5 sm:p-7">
+            <div className="p-3 sm:p-7">
 
               <p
                 className="
-                  text-[8px] sm:text-xs uppercase tracking-[1.5px] sm:tracking-[3px]
+                  text-[7px]
+                  sm:text-xs
+                  uppercase
+                  tracking-[1.2px]
+                  sm:tracking-[3px]
+                  leading-3.5
                   text-gray-400
                 "
               >
@@ -1158,10 +1182,12 @@ export default function Home() {
 
               <h3
                 className="
-                  mt-3
-                  text-xl
+                  mt-2
+                  text-[13px]
                   sm:text-2xl
                   font-bold
+                  leading-[1.2]
+                  sm:leading-tight
                 "
               >
                 PLC-Based Smart Warehouse Automation
@@ -1170,11 +1196,13 @@ export default function Home() {
 
               <p
                 className="
-                  mt-3
-                  text-sm
+                  mt-2.5
+                  text-[8.5px]
                   sm:text-base
                   text-gray-500
-                  leading-7
+                  leading-[1.45]
+                  sm:leading-7
+                  line-clamp-3
                 "
               >
                 CODESYS-controlled conveyor sorting system with product tracking,
@@ -1186,11 +1214,15 @@ export default function Home() {
 
                 <span
                   className="
-                    px-3
-                    py-1
+                    px-2
+                    py-0.5
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[8px]
+                    sm:text-xs
+                    leading-none
                   "
                 >
                   CODESYS
@@ -1199,11 +1231,14 @@ export default function Home() {
 
                 <span
                   className="
-                    px-3
-                    py-1
+                    px-2
+                    py-0.5
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[8px]
+                    sm:text-xs
                   "
                 >
                   Structured Text
@@ -1212,11 +1247,14 @@ export default function Home() {
 
                 <span
                   className="
-                    px-3
-                    py-1
+                    px-2
+                    py-0.5
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[8px]
+                    sm:text-xs
                   "
                 >
                   OPC UA
@@ -1225,11 +1263,14 @@ export default function Home() {
 
                 <span
                   className="
-                    px-3
-                    py-1
+                    px-2
+                    py-0.5
+                    sm:px-3
+                    sm:py-1
                     rounded-full
                     bg-[#F5F5F1]
-                    text-xs
+                    text-[8px]
+                    sm:text-xs
                   "
                 >
                   Godot
