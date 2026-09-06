@@ -1302,46 +1302,393 @@ export default function Home() {
             className="
               mt-10
               sm:mt-12
+              grid
+              gap-5
             "
           >
 
+            {/* B.Tech */}
+
             <div
               className="
-                border-l-2
-                border-[#F4B400]
-                pl-5
-                sm:pl-6
+                relative
+                rounded-3xl
+                border
+                border-[#E5E5E0]
+                bg-[#F8F8F5]
+                p-6
+                sm:p-7
+                md:p-8
               "
             >
 
-              <p className="text-sm text-gray-400">
-                B.Tech
-              </p>
-
-
-              <h3
+              <div
                 className="
-                  mt-2
-                  text-xl
-                  sm:text-2xl
-                  font-bold
+                  absolute
+                  left-0
+                  top-7
+                  h-10
+                  w-[3px]
+                  rounded-r-full
+                  bg-[#F4B400]
+                "
+              />
+
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-7
+                  sm:flex-row
+                  sm:items-start
+                  sm:justify-between
+                  sm:gap-10
                 "
               >
-                Electronics &amp; Instrumentation Engineering
-              </h3>
 
+                <div className="min-w-0">
+
+                  <p
+                    className="
+                      text-[11px]
+                      sm:text-xs
+                      uppercase
+                      tracking-[2.5px]
+                      text-gray-400
+                    "
+                  >
+                    B.Tech · 2022 — 2026
+                  </p>
+
+                  <h3
+                    className="
+                      mt-3
+                      text-xl
+                      sm:text-2xl
+                      font-bold
+                      leading-tight
+                    "
+                  >
+                    Applied Electronics &amp; Instrumentation
+                  </h3>
+
+                  <p
+                    className="
+                      mt-2
+                      text-sm
+                      sm:text-base
+                      text-gray-500
+                      leading-7
+                    "
+                  >
+                    Government Engineering College Kozhikode
+                  </p>
+
+                </div>
+
+                <div
+                  className="
+                    shrink-0
+                    flex
+                    flex-col
+                    items-start
+                    sm:items-end
+                  "
+                >
+
+                  <span
+                    className="
+                      inline-flex
+                      w-fit
+                      rounded-full
+                      border
+                      border-[#E5E5E0]
+                      bg-white
+                      px-3
+                      py-1
+                      text-[11px]
+                      text-gray-500
+                    "
+                  >
+                    Undergraduate
+                  </span>
+
+                  <p
+                    className="
+                      mt-4
+                      text-[10px]
+                      uppercase
+                      tracking-[2.5px]
+                      text-gray-400
+                    "
+                  >
+                    CGPA
+                  </p>
+
+                  <p
+                    className="
+                      mt-1
+                      text-base
+                      sm:text-lg
+                      font-semibold
+                      tracking-tight
+                      text-[#111111]
+                    "
+                  >
+                    7.24 / 10
+                  </p>
+
+                </div>
+
+              </div>
+
+              <div
+                className="
+                  mt-7
+                  border-t
+                  border-[#E8E8E3]
+                  pt-5
+                "
+              >
+                <p
+                  className="
+                    max-w-3xl
+                    text-sm
+                    sm:text-base
+                    text-gray-500
+                    leading-7
+                  "
+                >
+                  B.Tech in Applied Electronics and Instrumentation with a
+                  focus on electronics, instrumentation, industrial automation
+                  and control systems.
+                </p>
+              </div>
+
+            </div>
+
+
+            {/* Professional Diploma */}
+
+            <div
+              className="
+                relative
+                rounded-3xl
+                border
+                border-[#E5E5E0]
+                bg-[#F8F8F5]
+                p-6
+                sm:p-7
+                md:p-8
+              "
+            >
+
+              <div
+                className="
+                  absolute
+                  left-0
+                  top-7
+                  h-10
+                  w-[3px]
+                  rounded-r-full
+                  bg-[#F4B400]
+                "
+              />
+
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-2
+                  sm:flex-row
+                  sm:items-start
+                  sm:justify-between
+                "
+              >
+
+                <div>
+
+                  <p
+                    className="
+                      text-[11px]
+                      sm:text-xs
+                      uppercase
+                      tracking-[2.5px]
+                      text-gray-400
+                    "
+                  >
+                    Currently Pursuing
+                  </p>
+
+                  <h3
+                    className="
+                      mt-2
+                      text-xl
+                      sm:text-2xl
+                      font-bold
+                    "
+                  >
+                    Professional Diploma in Industrial Automation
+                  </h3>
+
+                  <p
+                    className="
+                      mt-2
+                      text-sm
+                      sm:text-base
+                      text-gray-500
+                      leading-7
+                    "
+                  >
+                    IPCS Global
+                  </p>
+
+                </div>
+
+                <span
+                  className="
+                    inline-flex
+                    w-fit
+                    rounded-full
+                    border
+                    border-[#E5E5E0]
+                    bg-white
+                    px-3
+                    py-1
+                    text-[11px]
+                    text-gray-500
+                  "
+                >
+                  In Progress
+                </span>
+
+              </div>
 
               <p
                 className="
-                  mt-2
+                  mt-5
+                  max-w-3xl
                   text-sm
                   sm:text-base
                   text-gray-500
                   leading-7
                 "
               >
-                Focused on industrial automation, control systems,
-                instrumentation and process engineering.
+                Currently pursuing advanced practical training in PLCs,
+                industrial control and automation systems.
+              </p>
+
+            </div>
+
+
+            {/* NPTEL Certification */}
+
+            <div
+              className="
+                relative
+                rounded-3xl
+                border
+                border-[#E5E5E0]
+                bg-[#F8F8F5]
+                p-6
+                sm:p-7
+                md:p-8
+              "
+            >
+
+              <div
+                className="
+                  absolute
+                  left-0
+                  top-7
+                  h-10
+                  w-[3px]
+                  rounded-r-full
+                  bg-[#F4B400]
+                "
+              />
+
+              <div
+                className="
+                  flex
+                  flex-col
+                  gap-2
+                  sm:flex-row
+                  sm:items-start
+                  sm:justify-between
+                "
+              >
+
+                <div>
+
+                  <p
+                    className="
+                      text-[11px]
+                      sm:text-xs
+                      uppercase
+                      tracking-[2.5px]
+                      text-gray-400
+                    "
+                  >
+                    NPTEL · 3-Month Course
+                  </p>
+
+                  <h3
+                    className="
+                      mt-2
+                      text-xl
+                      sm:text-2xl
+                      font-bold
+                    "
+                  >
+                    Control Engineering
+                  </h3>
+
+                  <p
+                    className="
+                      mt-2
+                      text-sm
+                      sm:text-base
+                      text-gray-500
+                      leading-7
+                    "
+                  >
+                    IIT Madras
+                  </p>
+
+                </div>
+
+                <span
+                  className="
+                    inline-flex
+                    w-fit
+                    rounded-full
+                    border
+                    border-[#E5E5E0]
+                    bg-white
+                    px-3
+                    py-1
+                    text-[11px]
+                    text-gray-500
+                  "
+                >
+                  Certified
+                </span>
+
+              </div>
+
+              <p
+                className="
+                  mt-5
+                  max-w-3xl
+                  text-sm
+                  sm:text-base
+                  text-gray-500
+                  leading-7
+                "
+              >
+                Completed a three-month NPTEL course in Control Engineering
+                from IIT Madras and earned the course certification.
               </p>
 
             </div>
