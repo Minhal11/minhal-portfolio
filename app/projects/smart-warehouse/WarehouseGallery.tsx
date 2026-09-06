@@ -121,43 +121,43 @@ function Gallery({ items }: { items: GalleryItem[] }) {
   const progress = ((index + 1) / items.length) * 100;
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-[28px] border border-[#E5E5E0] bg-white shadow-[0_10px_40px_rgba(17,17,17,0.035)]">
-      <div className="bg-[#F8F8F5] px-3 pt-3 sm:px-4 sm:pt-4">
-        <div className="flex h-[235px] items-center justify-center overflow-hidden rounded-2xl bg-[#F2F2ED] sm:h-[300px] md:h-[360px]">
+    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-2xl border border-[#E5E5E0] bg-white shadow-[0_10px_40px_rgba(17,17,17,0.035)] sm:rounded-[28px]">
+      <div className="bg-[#F8F8F5] px-2 pt-2 sm:px-4 sm:pt-4">
+        <div className="flex h-[175px] items-center justify-center overflow-hidden rounded-2xl bg-[#F2F2ED] sm:h-[300px] md:h-[360px]">
           <img
             src={current.image}
             alt={current.title}
-            className="max-h-full max-w-full object-contain"
+            className="h-auto max-h-full w-auto max-w-full object-contain"
           />
         </div>
       </div>
 
-      <div className="px-5 py-5 sm:px-7 sm:py-7 md:px-8">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <span className="text-[10px] uppercase tracking-[2.2px] text-gray-400 sm:text-[11px]">
+      <div className="px-3 py-3 sm:px-7 sm:py-7 md:px-8">
+        <div className="flex items-start justify-between gap-3">
+          <span className="text-[8px] uppercase tracking-[1.4px] text-gray-400 sm:text-[11px] sm:tracking-[2.2px]">
             {current.category}
           </span>
 
-          <span className="text-xs tabular-nums text-gray-400">
+          <span className="shrink-0 text-[9px] tabular-nums text-gray-400 sm:text-xs">
             {String(index + 1).padStart(2, "0")} /{" "}
             {String(items.length).padStart(2, "0")}
           </span>
         </div>
 
-        <h3 className="mt-3 text-2xl font-bold tracking-tight sm:text-[28px]">
+        <h3 className="mt-2 text-[15px] font-bold tracking-tight sm:mt-3 sm:text-[28px]">
           {current.title}
         </h3>
 
-        <p className="mt-3 max-w-3xl text-sm leading-7 text-gray-500 sm:text-base">
+        <p className="mt-2.5 max-w-3xl text-[9px] leading-[1.45] text-gray-500 sm:mt-3 sm:text-base sm:leading-7">
           {current.description}
         </p>
 
-        <div className="mt-6 flex items-center gap-3">
+        <div className="mt-4 flex items-center gap-2 sm:mt-6 sm:gap-3">
           <button
             type="button"
             onClick={previous}
             aria-label="Previous image"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5E5E0] text-base transition-colors hover:border-[#111]"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E5E0] text-[10px] transition-colors hover:border-[#111] sm:h-10 sm:w-10 sm:text-base"
           >
             ←
           </button>
@@ -173,7 +173,7 @@ function Gallery({ items }: { items: GalleryItem[] }) {
             type="button"
             onClick={next}
             aria-label="Next image"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5E5E0] text-base transition-colors hover:border-[#111]"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E5E0] text-sm transition-colors hover:border-[#111] sm:h-10 sm:w-10 sm:text-base"
           >
             →
           </button>
