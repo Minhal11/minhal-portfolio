@@ -41,32 +41,30 @@ const processSteps = [
   "Destination bin",
 ];
 
-const coreBlocks = [
-  {
-    title: "Product Identification",
-    text: (
-      <>
-        Barcode detection is converted into product and destination
-        information by the CODESYS{" "}
-        <span className="font-medium text-[#F4B400]">Product Manager</span>.
-      </>
-    ),
-  },
-  {
-    title: "Position-Based Tracking",
-    text: (
-      <>
-        Active boxes are tracked using{" "}
-        <span className="font-medium text-[#F4B400]">encoder-based</span>{" "}
-        position data rather than depending only on fixed timing.
-      </>
-    ),
-  },
-  {
-    title: "Automated Routing",
-    text:
-      "Destination and position determine when the appropriate diverter and spur conveyor should handle the product.",
-  },
+const dutFields = [
+  "Active",
+  "BoxID",
+  "Barcode",
+  "ProductType",
+  "Destination",
+  "ScanEncoder",
+  "CurrentPosition",
+  "Sorted",
+];
+
+const completedItems = [
+  "Barcode-based product identification & destination assignment",
+  "Encoder-based position tracking for every active product",
+  "Automatic A/B/C diverter routing to the correct spur conveyor",
+  "Bin capacity monitoring & warehouse-full interlocks",
+  "Independent operator retrieval & recovery logic",
+  "CODESYS \u2194 3D digital twin communication over OPC UA",
+];
+
+const plannedItems = [
+  "Ignition Perspective HMI/SCADA operator interface",
+  "Dedicated manual / maintenance control screen",
+  "Alarms & events monitoring view",
 ];
 
 export default function SmartWarehouseProject() {
@@ -82,7 +80,7 @@ export default function SmartWarehouseProject() {
         </Link>
       </div>
 
-      {/* Hero — paragraph + image: stacks readably on mobile, side-by-side on desktop */}
+      {/* Hero */}
       <section className="mx-auto max-w-5xl px-5 pb-12 pt-8 sm:px-6 sm:pb-20 sm:pt-14">
         <div className="grid items-center gap-6 md:grid-cols-[0.9fr_1.1fr] md:gap-10">
           <div>
@@ -98,8 +96,10 @@ export default function SmartWarehouseProject() {
             </h1>
 
             <p className="mt-5 max-w-xl text-[15px] leading-7 text-gray-600 sm:mt-6 sm:text-lg sm:leading-8">
-              A PLC-based warehouse automation and sorting system developed
-              using CODESYS, OPC UA and a 3D simulation environment.
+              A simulated conveyor-sorting system built to apply core PLC and
+              automation concepts — product identification, position
+              tracking and automatic routing — using CODESYS, OPC UA and a
+              3D digital twin.
             </p>
 
             <div className="mt-5 flex flex-wrap gap-1.5 sm:mt-6 sm:gap-2">
@@ -134,34 +134,31 @@ export default function SmartWarehouseProject() {
         </div>
       </section>
 
-      {/* 01 Overview — paragraph + card: stacks readably on mobile */}
+      {/* 01 Overview */}
       <section className="border-y border-[#EAEAE5] bg-white">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 sm:py-20">
           <SectionTitle
             number="01"
             title="Project Overview"
-            eyebrow="System concept"
+            eyebrow="Why this project exists"
           />
 
           <div className="grid items-start gap-7 md:grid-cols-[1.08fr_0.92fr] md:gap-12">
             <div>
               <p className="max-w-2xl text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-                This project was built to apply core PLC and automation
-                concepts I was learning — conveyor control, product
-                identification and position-based routing — inside a
-                realistic simulated warehouse, rather than to solve an
-                existing industrial problem. CODESYS forms the control layer,
-                while the 3D simulation represents the physical process it
-                commands.
+                This project wasn&apos;t built to solve an existing
+                industrial problem — it was built to apply core PLC and
+                automation concepts I was learning inside a realistic,
+                simulated warehouse. CODESYS acts as the control brain,
+                deciding what should happen; the 3D simulation represents the
+                physical conveyor line responding to those decisions.
               </p>
 
               <p className="mt-5 max-w-2xl text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-                Products are introduced into the simulation and identified at
-                the scanning station. The core of the system is the box
-                tracking logic — a custom data structure (DUT) that acts as a
-                Product Manager for each item, holding its identity,
-                encoder-based position and destination until it's routed to
-                the correct bin.
+                A product enters the line, gets identified at the scanning
+                station, and is tracked as it travels — until it reaches the
+                diverter for its assigned bin. The sections below walk
+                through how each of those steps is actually implemented.
               </p>
 
               <div className="mt-6 flex items-center gap-2 text-[9px] sm:mt-7 sm:text-[10px] uppercase tracking-[2.4px] text-gray-400">
@@ -169,15 +166,11 @@ export default function SmartWarehouseProject() {
               </div>
             </div>
 
-            {/* Compact process palette — short glanceable list, stays 2-col at all sizes */}
+            {/* Compact process palette — the one canonical place the full pipeline is listed */}
             <div className="rounded-[22px] border border-[#E5E5E0] bg-[#F8F8F5] p-4 sm:rounded-[26px] sm:p-6">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center">
-                  <p className="text-[10px] font-medium uppercase tracking-[3px] text-gray-500">
-                    Process Flow
-                  </p>
-                </div>
-              </div>
+              <p className="text-[10px] font-medium uppercase tracking-[3px] text-gray-500">
+                Process Flow
+              </p>
 
               <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-3 sm:mt-5 sm:gap-x-5 sm:gap-y-3.5">
                 {processSteps.map((step, index) => (
@@ -199,54 +192,28 @@ export default function SmartWarehouseProject() {
         </div>
       </section>
 
-      {/* Core engineering — short cards: side-by-side at all sizes, like desktop */}
-      <section className="bg-[#F8F8F6]">
-        <div className="mx-auto max-w-5xl px-5 py-8 sm:px-6 sm:py-16">
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            {coreBlocks.map((item, index) => (
-              <div
-                key={item.title}
-                className="relative rounded-xl border border-[#E5E5E0] bg-white p-2.5 sm:rounded-3xl sm:p-6"
-              >
-                <span className="absolute right-3 top-3 text-[8px] tabular-nums text-gray-300 sm:right-5 sm:top-5 sm:text-[10px]">
-                  0{index + 1}
-                </span>
-
-                <h3 className="pr-6 text-[10px] font-bold leading-tight sm:pr-8 sm:text-xl">
-                  {item.title}
-                </h3>
-
-                <p className="mt-2 text-[7.5px] leading-[1.4] text-gray-500 sm:mt-3 sm:text-base sm:leading-7">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 02 CODESYS */}
+      {/* 02 CODESYS Control — the one place the 3-layer architecture is explained */}
       <section className="bg-white">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 sm:py-20">
           <SectionTitle
             number="02"
             title="CODESYS Control"
-            eyebrow="PLC logic & engineering"
+            eyebrow="The brain of the system"
           />
 
           <p className="max-w-3xl text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-            The control system is implemented in CODESYS using both Ladder
-            Logic and Structured Text. Ladder Logic handles machine control
-            and sequencing, while Structured Text handles product
-            management, position tracking and routing calculations.
+            CODESYS is the single source of control logic for the entire
+            system, written in both Ladder Logic and Structured Text. It
+            never shares that decision-making with the simulation — instead
+            it communicates over OPC UA, so CODESYS decides what should
+            happen and the 3D environment represents it happening.
           </p>
 
-          {/* Logic/Motion/Routing — short cards: side-by-side at all sizes */}
           <div className="mt-7 grid grid-cols-3 gap-2 sm:mt-9 sm:gap-4">
             {[
-              ["Logic", "Ladder + Structured Text"],
-              ["Motion", "Encoder-Based Position"],
-              ["Routing", "Destination-Aware Diverters"],
+              ["Ladder Logic", "Machine sequencing"],
+              ["Structured Text", "Product & routing logic"],
+              ["OPC UA", "PLC \u2194 simulation link"],
             ].map(([label, value]) => (
               <div
                 key={label}
@@ -268,53 +235,71 @@ export default function SmartWarehouseProject() {
         </div>
       </section>
 
-      {/* 03 Box Tracking — paragraph + image: stacks readably on mobile */}
+      {/* 03 Box Tracking — the technical centerpiece */}
       <section className="bg-[#F8F8F6]">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 sm:py-20">
           <SectionTitle
             number="03"
             title="Box Tracking"
-            eyebrow="State & position"
+            eyebrow="State & position — the core focus"
           />
 
-          {/* Core Focus callout — this is the technical centerpiece of the project */}
-          <div className="relative mb-6 rounded-2xl border border-[#E5D9A8] bg-white p-3.5 sm:mb-9 sm:rounded-3xl sm:p-8">
+          {/* Core Focus callout, now balanced with the DUT fields instead of empty space */}
+          <div className="relative mb-7 grid gap-4 rounded-2xl border border-[#E5D9A8] bg-white p-3.5 sm:mb-10 sm:rounded-3xl sm:p-8 md:grid-cols-[1.3fr_1fr] md:gap-8">
             <div className="absolute left-0 top-5 h-8 w-[3px] rounded-r-full bg-[#F4B400] sm:top-8 sm:h-10" />
 
-            <span className="inline-flex rounded-full border border-[#F4B400]/50 bg-[#FFF8E3] px-2 py-0.5 text-[7px] font-medium uppercase tracking-[1px] text-[#8a6d00] sm:px-3 sm:py-1 sm:text-[10px] sm:tracking-[2px]">
-              Core Focus
-            </span>
+            <div>
+              <span className="inline-flex rounded-full border border-[#F4B400]/50 bg-[#FFF8E3] px-2 py-0.5 text-[7px] font-medium uppercase tracking-[1px] text-[#8a6d00] sm:px-3 sm:py-1 sm:text-[10px] sm:tracking-[2px]">
+                Core Focus
+              </span>
 
-            <h3 className="mt-2 text-[12px] font-bold leading-tight sm:mt-3 sm:text-2xl">
-              The Product Manager DUT
-            </h3>
+              <h3 className="mt-2 text-[12px] font-bold leading-tight sm:mt-3 sm:text-2xl">
+                The Product Manager DUT
+              </h3>
 
-            <p className="mt-2 max-w-2xl text-[8.5px] leading-[1.55] text-gray-500 sm:mt-3 sm:text-base sm:leading-7">
-              Each active product is tracked using a custom CODESYS data
-              structure (DUT) that acts as a Product Manager for the line —
-              holding its ID, barcode, product type, destination, scan-time
-              encoder reference and live position. Getting this state model
-              right, and debugging the encoder-based position calculations
-              built on top of it, was where most of the actual engineering
-              work happened on this project.
-            </p>
+              <p className="mt-2 text-[8.5px] leading-[1.55] text-gray-500 sm:mt-3 sm:text-base sm:leading-7">
+                Each active product is tracked using a custom CODESYS data
+                structure (DUT) that acts as a Product Manager for the line —
+                holding everything the PLC needs to know about that item
+                until it reaches its bin. Getting this state model right was
+                where most of the actual engineering work on this project
+                happened.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-[#E5E5E0] bg-[#F8F8F5] p-3 sm:rounded-2xl sm:p-4">
+              <p className="text-[7px] uppercase tracking-[1.5px] text-gray-400 sm:text-[10px] sm:tracking-[2px]">
+                DUT_Box fields
+              </p>
+              <div className="mt-2.5 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
+                {dutFields.map((field) => (
+                  <span
+                    key={field}
+                    className="rounded-md border border-[#E5E5E0] bg-white px-1.5 py-1 font-mono text-[7px] text-gray-600 sm:px-2 sm:py-1.5 sm:text-[11px]"
+                  >
+                    {field}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="grid items-start gap-7 md:grid-cols-[1fr_0.9fr] md:gap-10">
             <div>
               <p className="text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-                Box tracking is one of the central parts of the control
-                strategy. Each active product has a structured state, while
-                its current conveyor position is calculated from the universal
-                encoder and scan position.
+                Position is calculated relative to the barcode scanner: the
+                moment a product is scanned, its encoder reading is stored as
+                a reference point. As the conveyor moves, subtracting that
+                reference from the live encoder value gives the product&apos;s
+                exact travel distance.
               </p>
 
               <p className="mt-5 text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-                This information allows the routing logic to act on position
-                rather than relying only on a fixed-delay sequence.
+                That&apos;s what lets the PLC trigger the correct diverter
+                based on real movement, instead of a fixed delay that breaks
+                the moment conveyor speed changes.
               </p>
 
-              {/* Short glanceable trio — stays 3-col at all sizes */}
               <div className="mt-6 grid max-w-sm grid-cols-3 gap-2 sm:mt-7">
                 {["ID", "POSITION", "DESTINATION"].map((item, index) => (
                   <div
@@ -353,12 +338,14 @@ export default function SmartWarehouseProject() {
           />
 
           <p className="max-w-3xl text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-            The Godot/OIP environment provides the visual simulation layer
-            for the warehouse. It represents product movement, scanning,
-            diverter actuation, spur conveyors and destination bins.
+            The 3D environment is a digital twin, not an animation — it
+            doesn&apos;t move products on its own. It reflects the state
+            CODESYS commands over OPC UA: when a diverter activates in the
+            PLC, the simulated diverter responds; when a product reaches a
+            sensor, that state flows back to the PLC. The video below shows
+            a complete cycle.
           </p>
 
-          {/* Live demo — proves the system actually runs, not just static renders */}
           <div className="mt-7 sm:mt-10">
             <div className="overflow-hidden rounded-[22px] border border-[#E5E5E0] bg-white sm:rounded-[28px]">
               <div className="aspect-video bg-[#F1F1EC]">
@@ -377,9 +364,8 @@ export default function SmartWarehouseProject() {
               </div>
             </div>
             <p className="mt-3 text-[11px] leading-5 text-gray-400 sm:text-sm sm:leading-6">
-              A complete sorting cycle — barcode identification, encoder-based
-              position tracking and automated routing to the assigned
-              destination bin.
+              A full sorting cycle, start to finish — driven entirely by the
+              CODESYS logic, not scripted in the simulation.
             </p>
           </div>
 
@@ -389,7 +375,7 @@ export default function SmartWarehouseProject() {
         </div>
       </section>
 
-      {/* 05 OPC UA — paragraph + image: stacks readably on mobile */}
+      {/* 05 OPC UA — brief, since the architecture is already explained in 02 */}
       <section className="bg-[#F8F8F6]">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 sm:py-20">
           <SectionTitle
@@ -401,10 +387,9 @@ export default function SmartWarehouseProject() {
           <div className="grid items-center gap-7 md:grid-cols-[0.9fr_1.1fr] md:gap-10">
             <div>
               <p className="text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
-                OPC UA forms the communication layer between the CODESYS
-                control system and the 3D simulation. Exposed variables carry
-                the states and commands required for the simulated process to
-                respond to the PLC.
+                OPC UA exposes the PLC variables — diverter states, sensor
+                signals, conveyor status — that the simulation needs to stay
+                in sync with the control logic in real time.
               </p>
 
               <div className="mt-7 flex items-center gap-3">
@@ -425,61 +410,63 @@ export default function SmartWarehouseProject() {
         </div>
       </section>
 
-      {/* 06 Operator Control — short cards: side-by-side at all sizes */}
+      {/* 06 Status & What's Next — honest, no overclaiming */}
       <section className="bg-white">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 sm:py-20">
           <SectionTitle
             number="06"
-            title="Operator Control"
-            eyebrow="Current implementation"
+            title="Status & What's Next"
+            eyebrow="Where the project stands"
           />
 
-          <div className="grid grid-cols-3 gap-2 sm:gap-3">
-            {[
-              {
-                label: "Simulation Interface",
-                title: "Operator Inputs",
-                text:
-                  "The current 3D environment provides basic operator inputs for starting, stopping and testing conveyor behaviour.",
-              },
-              {
-                label: "Current Brain",
-                title: "CODESYS PLC",
-                text:
-                  "Product management, tracking, sequencing and routing are handled by the PLC control logic.",
-              },
-              {
-                label: "Future Layer",
-                title: "Ignition HMI / SCADA",
-                text:
-                  "Planned as a future supervisory and visualization layer for operator-facing control and system monitoring.",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="relative rounded-xl border border-[#E5E5E0] bg-[#F8F8F5] p-2.5 sm:rounded-3xl sm:p-6"
-              >
-                <p className="pr-3 text-[7.5px] uppercase tracking-[1px] text-gray-400 sm:pr-4 sm:text-[10px] sm:tracking-[2px]">
-                  {item.label}
-                </p>
+          <p className="max-w-3xl text-[15px] leading-7 text-gray-600 sm:text-lg sm:leading-8">
+            The core automation is complete and validated in simulation.
+            Operator controls currently live directly in the 3D environment
+            for testing — a dedicated HMI is the planned next step.
+          </p>
 
-                <h3 className="mt-2 text-[10px] font-bold leading-tight sm:mt-3 sm:text-xl">
-                  {item.title}
-                </h3>
+          <div className="mt-7 grid grid-cols-2 gap-2 sm:mt-9 sm:gap-6">
+            <div className="rounded-xl border border-[#E5E5E0] bg-white p-2.5 sm:rounded-2xl sm:p-6">
+              <p className="text-[7.5px] font-medium uppercase tracking-[1.5px] text-[#8a6d00] sm:text-[10px] sm:tracking-[2.5px]">
+                Completed
+              </p>
+              <ul className="mt-2.5 space-y-1.5 sm:mt-4 sm:space-y-2.5">
+                {completedItems.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-1.5 text-[7.5px] leading-[1.4] text-gray-600 sm:gap-2 sm:text-sm sm:leading-6"
+                  >
+                    <span className="mt-[3px] h-[5px] w-[5px] shrink-0 rounded-full bg-[#F4B400] sm:mt-[7px] sm:h-[6px] sm:w-[6px]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-                <p className="mt-2 text-[7.5px] leading-[1.4] text-gray-500 sm:mt-3 sm:text-base sm:leading-7">
-                  {item.text}
-                </p>
-              </div>
-            ))}
+            <div className="rounded-xl border border-[#E5E5E0] bg-[#F8F8F5] p-2.5 sm:rounded-2xl sm:p-6">
+              <p className="text-[7.5px] font-medium uppercase tracking-[1.5px] text-gray-400 sm:text-[10px] sm:tracking-[2.5px]">
+                Planned Next
+              </p>
+              <ul className="mt-2.5 space-y-1.5 sm:mt-4 sm:space-y-2.5">
+                {plannedItems.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-1.5 text-[7.5px] leading-[1.4] text-gray-500 sm:gap-2 sm:text-sm sm:leading-6"
+                  >
+                    <span className="mt-[3px] h-[5px] w-[5px] shrink-0 rounded-full border border-gray-300 sm:mt-[7px] sm:h-[6px] sm:w-[6px]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* GitHub — short content: side-by-side at all sizes */}
-      <section className="bg-white">
+      {/* GitHub */}
+      <section className="bg-[#F8F8F6]">
         <div className="mx-auto max-w-5xl px-5 py-12 sm:px-6 sm:py-20">
-          <div className="flex flex-row items-center justify-between gap-3 rounded-[22px] border border-[#E5E5E0] bg-[#F8F8F5] px-4 py-4 sm:gap-4 sm:rounded-[28px] sm:px-8 sm:py-8">
+          <div className="flex flex-row items-center justify-between gap-3 rounded-[22px] border border-[#E5E5E0] bg-white px-4 py-4 sm:gap-4 sm:rounded-[28px] sm:px-8 sm:py-8">
             <div className="min-w-0">
               <p className="flex items-center text-[8px] uppercase tracking-[1.5px] text-gray-400 sm:text-[10px] sm:tracking-[3px]">
                 <span className="mr-1.5 inline-block h-[2px] w-3.5 bg-[#F4B400] sm:mr-2 sm:w-5" />
@@ -508,7 +495,7 @@ export default function SmartWarehouseProject() {
         </div>
       </section>
 
-      {/* Footer — short content: side-by-side at all sizes */}
+      {/* Footer */}
       <footer className="mx-auto max-w-5xl px-5 py-8 sm:px-6 sm:py-12">
         <div className="flex flex-row items-center justify-between gap-4 sm:gap-5">
           <p className="text-[11px] text-gray-400 sm:text-sm">© 2026 Minhal Rahman</p>
