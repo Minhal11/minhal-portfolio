@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 
 type GalleryItem = {
   category: string;
@@ -121,10 +122,12 @@ function Gallery({ items }: { items: GalleryItem[] }) {
   const progress = ((index + 1) / items.length) * 100;
 
   return (
-    <div className="mx-auto w-full max-w-4xl overflow-hidden rounded-[22px] border border-[#E5E5E0] bg-white shadow-[0_10px_40px_rgba(17,17,17,0.035)] sm:rounded-[28px]">
+    <div className="project-gallery mx-auto w-full max-w-4xl overflow-hidden rounded-[22px] border border-[#E5E5E0] bg-white shadow-[0_10px_40px_rgba(17,17,17,0.035)] sm:rounded-[28px]">
       <div className="bg-[#F8F8F5] px-2 pt-2 sm:px-4 sm:pt-4">
         <div className="flex h-[210px] items-center justify-center overflow-hidden rounded-2xl bg-[#F2F2ED] sm:h-[300px] md:h-[360px]">
-          <img
+          <Image
+            width={1400}
+            height={900}
             src={current.image}
             alt={current.title}
             className="h-auto max-h-full w-auto max-w-full object-contain"
@@ -164,7 +167,7 @@ function Gallery({ items }: { items: GalleryItem[] }) {
 
           <div className="h-[2px] flex-1 overflow-hidden rounded-full bg-[#EAEAE5]">
             <div
-              className="h-full bg-[#F4B400] transition-[width] duration-300 ease-out"
+              className="h-full bg-[#c94a23] transition-[width] duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>

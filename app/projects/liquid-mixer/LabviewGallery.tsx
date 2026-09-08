@@ -61,13 +61,15 @@ const slides: Slide[] = [
   {
     category: "Block Diagram",
     title: "Temp Logic",
-    description: "Heats the batch toward the TEMP setpoint, status reads Heating.",
+    description:
+      "Heats the batch toward the TEMP setpoint, status reads Heating.",
     src: "/labview/bd-temp-logic.jpg",
   },
   {
     category: "Block Diagram",
     title: "Dispose",
-    description: "Dispenses the finished batch according to the DISPOSE quantity.",
+    description:
+      "Dispenses the finished batch according to the DISPOSE quantity.",
     src: "/labview/bd-dispose.jpg",
   },
   {
@@ -96,7 +98,16 @@ const variants = {
 
 function ChevronLeft() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M15 18l-6-6 6-6" />
     </svg>
   );
@@ -104,7 +115,16 @@ function ChevronLeft() {
 
 function ChevronRight() {
   return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M9 18l6-6-6-6" />
     </svg>
   );
@@ -124,8 +144,7 @@ export default function LabviewGallery() {
   const progress = ((index + 1) / slides.length) * 100;
 
   return (
-    <div className="rounded-3xl border border-[#E0E0DA] bg-white p-4 shadow-sm">
-
+    <div className="project-gallery rounded-3xl border border-[#E0E0DA] bg-white p-4 shadow-sm">
       {/* Image */}
       <div className="relative w-full h-[260px] md:h-[320px] rounded-xl overflow-hidden bg-[#FAFAF8]">
         <AnimatePresence custom={direction} mode="wait" initial={false}>
@@ -151,13 +170,14 @@ export default function LabviewGallery() {
             className={`text-[11px] font-medium tracking-[0.15em] uppercase px-2.5 py-0.5 rounded-full border ${
               slide.category === "Control Panel"
                 ? "text-[#555] border-[#E0E0DA]"
-                : "text-[#8a6a00] border-[#F4B400]/40 bg-[#FBF3DC]"
+                : "text-[#8a6a00] border-[#c94a23]/40 bg-[#FBF3DC]"
             }`}
           >
             {slide.category}
           </span>
           <span className="text-[12px] tracking-wide text-gray-400">
-            {String(index + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}
+            {String(index + 1).padStart(2, "0")} /{" "}
+            {String(slides.length).padStart(2, "0")}
           </span>
         </div>
 
@@ -169,7 +189,9 @@ export default function LabviewGallery() {
             exit={{ opacity: 0, y: -4 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            <h3 className="mt-3 text-xl font-bold text-[#111]">{slide.title}</h3>
+            <h3 className="mt-3 text-xl font-bold text-[#111]">
+              {slide.title}
+            </h3>
             <p className="mt-1.5 text-[15px] text-gray-600 leading-6">
               {slide.description}
             </p>
@@ -189,7 +211,7 @@ export default function LabviewGallery() {
 
         <div className="flex-1 h-[3px] rounded-full bg-[#EFEFEA] overflow-hidden">
           <motion.div
-            className="h-full bg-[#F4B400] rounded-full"
+            className="h-full bg-[#c94a23] rounded-full"
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.3, ease: "easeOut" }}
           />
@@ -203,7 +225,6 @@ export default function LabviewGallery() {
           <ChevronRight />
         </button>
       </div>
-
     </div>
   );
 }
