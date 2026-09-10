@@ -833,7 +833,7 @@ export default function Home() {
                 mx-auto
               "
             >
-              Aspiring Automation &amp; Instrumentation Engineer focused on
+              ng Automation &amp; Instrumentation Engineer focused on
               industrial control systems, process automation, and engineering
               innovation.
             </p>

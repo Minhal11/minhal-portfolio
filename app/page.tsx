@@ -36,13 +36,12 @@ export default function Home() {
       <section className="hero wrap">
         <div className="hero-copy">
           <p className="eyebrow">
-            <span className="status-dot" /> ASPIRING AUTOMATION &
+            <span className="status-dot" /> AUTOMATION &
             INSTRUMENTATION ENGINEER
           </p>
           <HeroHeadline />
           <p className="hero-intro">
-            Hi, I’m <strong>Minhal Rahman.</strong> I connect code, control, and
-            hardware to turn engineering ideas into systems that work.
+            Hi, I’m <strong>Minhal Rahman.</strong>Hi, I’m Minhal Rahman. I build, learn, and integrate across automation, control systems, and emerging technologies.
           </p>
           <div className="hero-actions">
             <a className="button button-dark" href="#projects">
