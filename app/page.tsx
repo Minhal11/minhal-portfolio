@@ -50,7 +50,7 @@ export default function Home() {
             </a>
             <a
               className="resume-link"
-              href="/Minhal_Rahman_Resume.pdf"
+              href="/documents/Minhal_Resume.pdf"
               download
             >
               Download résumé <span aria-hidden="true">↓</span>
@@ -279,7 +279,15 @@ export default function Home() {
           >
             LinkedIn ↗
           </a>
-          <a href="/Minhal_Rahman_Resume.pdf" download>
+          <a href="\
+          
+          
+          
+          
+          
+          
+          
+          `\documents\Minhal_Resume.pdf" download>
             Résumé ↓
           </a>
         </div>
