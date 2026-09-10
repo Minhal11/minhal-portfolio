@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const sections = [
   ["projects", "Projects"],
@@ -13,8 +13,14 @@ const sections = [
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("");
+  const [headerHidden, setHeaderHidden] = useState(false);
+
+  const lastScrollY = useRef(0);
   const pathname = usePathname();
 
+  // ---------------------------------------------------------
+  // Active section highlighting
+  // ---------------------------------------------------------
   useEffect(() => {
     if (pathname !== "/") {
       setActive("");
@@ -24,10 +30,13 @@ export default function SiteHeader() {
     const nodes = sections
       .map(([id]) => document.getElementById(id))
       .filter((node): node is HTMLElement => Boolean(node));
+
     if (!nodes.length) return;
 
     const onScroll = () => {
-      if (window.scrollY < 90) setActive("");
+      if (window.scrollY < 90) {
+        setActive("");
+      }
     };
 
     const observer = new IntersectionObserver(
@@ -36,34 +45,112 @@ export default function SiteHeader() {
           setActive("");
           return;
         }
+
         const visible = entries
           .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible?.target.id) setActive(visible.target.id);
+          .sort(
+            (a, b) =>
+              b.intersectionRatio - a.intersectionRatio,
+          )[0];
+
+        if (visible?.target.id) {
+          setActive(visible.target.id);
+        }
       },
-      { rootMargin: "-28% 0px -55% 0px", threshold: [0.1, 0.25, 0.5] },
+      {
+        rootMargin: "-28% 0px -55% 0px",
+        threshold: [0.1, 0.25, 0.5],
+      },
     );
 
     nodes.forEach((node) => observer.observe(node));
+
     onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    });
+
     return () => {
       observer.disconnect();
       window.removeEventListener("scroll", onScroll);
     };
   }, [pathname]);
 
+  // ---------------------------------------------------------
+  // Hide header on scroll down / show on scroll up
+  // ---------------------------------------------------------
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always keep the header visible near the top
+      if (currentScrollY <= 10) {
+        setHeaderHidden(false);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // Ignore tiny movements to prevent jitter
+      const distance = Math.abs(
+        currentScrollY - lastScrollY.current,
+      );
+
+      if (distance < 8) {
+        return;
+      }
+
+      if (currentScrollY > lastScrollY.current) {
+        // Scrolling down
+        setHeaderHidden(true);
+      } else {
+        // Scrolling up
+        setHeaderHidden(false);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    lastScrollY.current = window.scrollY;
+
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // ---------------------------------------------------------
+  // Reset header when changing pages
+  // ---------------------------------------------------------
+  useEffect(() => {
+    setHeaderHidden(false);
+    setOpen(false);
+    lastScrollY.current = window.scrollY;
+  }, [pathname]);
+
+  // ---------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------
   return (
-    <header className="site-header">
+    <header
+      className={`site-header ${
+        headerHidden ? "header-hidden" : ""
+      }`}
+    >
       <Link
         className="brand"
         href="/"
         onClick={() => setOpen(false)}
         aria-label="Minhal Rahman home"
       >
-        <span className="brand-mark">m<span>.</span></span>
-        <span>MINHAL RAHMAN<span className="brand-sub">AUTOMATION &amp; INSTRUMENTATION</span></span>
+        <span className="brand-mark">
+          m<span>.</span>
+        </span>
       </Link>
+
       <button
         className="menu-toggle"
         aria-expanded={open}
@@ -72,6 +159,7 @@ export default function SiteHeader() {
       >
         {open ? "Close −" : "Menu +"}
       </button>
+
       <nav
         id="site-nav"
         className={open ? "site-nav is-open" : "site-nav"}
@@ -87,7 +175,12 @@ export default function SiteHeader() {
             {label}
           </Link>
         ))}
-        <a className="nav-contact" href="mailto:minhalrahman21@gmail.com">
+
+        <a
+          className="nav-contact"
+          href="mailto:minhalrahman21@gmail.com"
+          onClick={() => setOpen(false)}
+        >
           Let’s talk <span aria-hidden="true">↗</span>
         </a>
       </nav>

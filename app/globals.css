@@ -72,6 +72,12 @@ section[id] {
   background: rgba(246, 245, 239, 0.95);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--line);
+
+  transition: top 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.site-header.header-hidden {
+  top: -100px;
 }
 .brand {
   display: flex;
@@ -147,8 +153,11 @@ section[id] {
   display: grid;
   grid-template-columns: 1.12fr 1fr;
   gap: 35px;
-  padding-top: 76px;
+  padding-top: 40px;
   align-items: center;
+}
+.hero-copy {
+  transform: translateY(-35px);
 }
 .eyebrow {
   font-family: monospace;
@@ -158,7 +167,7 @@ section[id] {
   font-weight: 500;
 }
 .hero .eyebrow {
-  font-size: 9px;
+  font-size: 11px;
   letter-spacing: 1.15px;
   display: flex;
   gap: 9px;
@@ -694,7 +703,7 @@ h2 {
     padding-inline: calc((100vw - 1280px) / 2);
   }
   .hero {
-    padding-top: 95px;
+    padding-top: 35px;
   }
   .hero h1 {
     font-size: 82px;
@@ -708,6 +717,10 @@ h2 {
     padding-inline: 32px;
     height: 85px;
   }
+   .hero-copy {
+    transform: none;
+  }
+
   .site-nav {
     gap: 22px;
   }
@@ -720,7 +733,7 @@ h2 {
     letter-spacing: -3.5px;
   }
   .hero .eyebrow {
-    font-size: 8px;
+    font-size: 10px;
     letter-spacing: 0.6px;
   }
   .hero-intro {
@@ -827,7 +840,7 @@ h2 {
     margin-top: 24px;
   }
   .hero .eyebrow {
-    font-size: 7px;
+    font-size: 9px;
     letter-spacing: 0.6px;
   }
   .hero-intro {
