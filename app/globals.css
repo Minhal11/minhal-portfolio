@@ -24,6 +24,13 @@ body {
   background: #f1ba9d;
   color: #242923;
 }
+body:has(.portfolio) {
+  --orange: #f4b400;
+}
+body:has(.portfolio) ::selection {
+  background: #f6e2a8;
+  color: #242923;
+}
 a,
 button {
   -webkit-tap-highlight-color: transparent;
@@ -99,10 +106,20 @@ section[id] {
   font-size: 12px;
 }
 .site-nav > a {
+  position: relative;
   transition: color 0.2s;
 }
 .site-nav > a:hover {
   color: var(--orange);
+}
+.site-nav > a.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px;
+  height: 1.5px;
+  background: var(--orange);
 }
 .nav-contact {
   border: 1px solid #bfc3b7;
@@ -167,11 +184,29 @@ section[id] {
 .muted-heading {
   color: #83877b;
 }
+.hero-rotate {
+  display: inline-block;
+  position: relative;
+  vertical-align: bottom;
+  overflow: hidden;
+}
+.hero-rotate-sizer {
+  visibility: hidden;
+  display: block;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.hero-rotate-word {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+}
 .hero-intro {
-  font-size: 14px;
+  font-size: 16px;
   color: #707468;
   line-height: 1.9;
-  max-width: 410px;
+  max-width: 430px;
   margin-top: 25px;
 }
 .hero-intro strong {
@@ -221,6 +256,7 @@ section[id] {
   border: 1px solid #d9ddd0;
   border-radius: 7px;
   position: relative;
+  overflow: hidden;
   transform: rotate(-2deg);
   box-shadow: 12px 16px 0 -4px #e7e8dd;
   margin-top: 8px;
@@ -320,7 +356,7 @@ h2 {
   font-weight: 500;
 }
 .section-heading > p {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.9;
   color: var(--muted);
 }
@@ -409,7 +445,7 @@ h2 {
   margin: 9px 0 12px;
 }
 .project-details > p:not(.eyebrow) {
-  font-size: 13px;
+  font-size: 15px;
   color: var(--muted);
   line-height: 1.9;
   max-width: 480px;
@@ -467,7 +503,7 @@ h2 {
   color: #79826c;
 }
 .about-content > p {
-  font-size: 13px;
+  font-size: 15px;
   color: #6d7662;
   line-height: 1.95;
   margin-bottom: 18px;
@@ -479,28 +515,12 @@ h2 {
   color: var(--ink);
   margin-bottom: 22px;
 }
-.focus-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  margin-top: 34px;
-  padding-top: 24px;
-  border-top: 1px solid #cbd2bf;
-}
-.focus-grid span {
-  font-family: monospace;
-  font-size: 10px;
-  color: #7c8969;
-}
-.focus-grid h3 {
-  font-size: 13px;
+.about-subhead {
+  font-size: 16px;
   font-weight: 600;
-  margin: 12px 0 8px;
-}
-.focus-grid p {
-  font-size: 11px;
-  line-height: 1.8;
-  color: #6d7662;
+  letter-spacing: -0.3px;
+  color: var(--ink);
+  margin: 30px 0 12px;
 }
 .education-list article {
   display: grid;
@@ -593,7 +613,7 @@ h2 {
   gap: 25px;
 }
 .contact-bottom p {
-  font-size: 12px;
+  font-size: 14px;
   line-height: 1.9;
   color: #adb7a2;
 }
@@ -704,7 +724,7 @@ h2 {
     letter-spacing: 0.6px;
   }
   .hero-intro {
-    font-size: 13px;
+    font-size: 15px;
   }
   .hero-actions {
     gap: 16px;
@@ -785,6 +805,11 @@ h2 {
   .site-nav a {
     padding: 15px 8px;
   }
+  .site-nav > a.is-active::after {
+    left: 8px;
+    right: 8px;
+    bottom: 10px;
+  }
   .site-nav .nav-contact {
     margin-top: 10px;
     padding: 13px;
@@ -796,8 +821,8 @@ h2 {
     gap: 35px;
   }
   .hero h1 {
-    font-size: clamp(49px, 11vw, 72px);
-    letter-spacing: -3px;
+    font-size: clamp(40px, 10.4vw, 64px);
+    letter-spacing: -2.4px;
     line-height: 1.07;
     margin-top: 24px;
   }
@@ -806,7 +831,7 @@ h2 {
     letter-spacing: 0.6px;
   }
   .hero-intro {
-    font-size: 13px;
+    font-size: 15px;
     max-width: 370px;
   }
   .hero-actions {
@@ -862,7 +887,7 @@ h2 {
   }
   .section-heading > p {
     margin-top: 17px;
-    font-size: 11px;
+    font-size: 13px;
   }
   .section-heading h2 {
     font-size: 33px;
@@ -885,7 +910,7 @@ h2 {
     font-size: 22px;
   }
   .project-details > p:not(.eyebrow) {
-    font-size: 12px;
+    font-size: 14px;
   }
   .project-bottom {
     margin-top: 22px;
@@ -905,10 +930,11 @@ h2 {
     font-size: 21px;
   }
   .about-content > p {
-    font-size: 12px;
+    font-size: 14px;
   }
-  .focus-grid {
-    gap: 20px;
+  .about-subhead {
+    font-size: 15px;
+    margin-top: 26px;
   }
   .education-list article {
     grid-template-columns: 1fr;
@@ -958,7 +984,7 @@ h2 {
     padding-top: 22px;
   }
   .contact-bottom p {
-    font-size: 11px;
+    font-size: 13px;
   }
   .contact-bottom > a {
     font-size: 13px;

@@ -1,9 +1,150 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+const DOTS: [number, number][] = [];
+for (let y = 1; y <= 440; y += 24) {
+  for (let x = 1; x <= 560; x += 24) {
+    DOTS.push([x, y]);
+  }
+}
+
 export default function SystemDiagram() {
+  const rootRef = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const dotsRef = useRef<SVGGElement>(null);
+  const ringsRef = useRef<SVGGElement>(null);
+  const flowRef = useRef<SVGGElement>(null);
+  const rearRef = useRef<SVGGElement>(null);
+  const aiRef = useRef<SVGGElement>(null);
+
+  useEffect(() => {
+    const root = rootRef.current;
+    const svg = svgRef.current;
+    if (!root || !svg) return;
+
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    if (!finePointer.matches || reduceMotion.matches) return;
+
+    const pointer = { x: 280, y: 220, inside: false };
+    const smoothed = { x: 280, y: 220, inf: 0 };
+    const dotOff = DOTS.map(() => ({ x: 0, y: 0 }));
+    let frame = 0;
+    let running = true;
+
+    const toSvg = (clientX: number, clientY: number) => {
+      const ctm = svg.getScreenCTM();
+      if (!ctm) return;
+      const point = new DOMPoint(clientX, clientY).matrixTransform(
+        ctm.inverse(),
+      );
+      pointer.x = point.x;
+      pointer.y = point.y;
+    };
+
+    const onMove = (event: PointerEvent) => {
+      pointer.inside = true;
+      toSvg(event.clientX, event.clientY);
+    };
+    const onLeave = () => {
+      pointer.inside = false;
+    };
+
+    root.addEventListener("pointermove", onMove);
+    root.addEventListener("pointerenter", onMove);
+    root.addEventListener("pointerleave", onLeave);
+
+    const rings = ringsRef.current;
+    const flow = flowRef.current;
+    const rear = rearRef.current;
+    const ai = aiRef.current;
+    const dots = dotsRef.current?.children;
+
+    const tick = () => {
+      if (!running) return;
+
+      const targetInf = pointer.inside ? 1 : 0;
+      const targetX = pointer.inside ? pointer.x : 280;
+      const targetY = pointer.inside ? pointer.y : 220;
+      smoothed.x += (targetX - smoothed.x) * 0.1;
+      smoothed.y += (targetY - smoothed.y) * 0.1;
+      smoothed.inf += (targetInf - smoothed.inf) * 0.1;
+
+      const inf = smoothed.inf;
+      const nx = (smoothed.x - 280) / 280;
+      const ny = (smoothed.y - 220) / 220;
+      const proximity =
+        Math.max(0, 1 - Math.hypot(smoothed.x - 280, smoothed.y - 220) / 210) *
+        inf;
+      const scale = 1 + proximity * 0.036;
+
+      rings?.setAttribute(
+        "transform",
+        `translate(280 220) scale(${scale}) translate(-280 -220)`,
+      );
+      flow?.setAttribute(
+        "transform",
+        `translate(${(nx * 4.2 * inf).toFixed(3)} ${(ny * 3.2 * inf).toFixed(3)})`,
+      );
+      rear?.setAttribute(
+        "transform",
+        `translate(${(nx * 6.5 * inf).toFixed(3)} ${(ny * 5.2 * inf).toFixed(3)})`,
+      );
+      ai?.setAttribute(
+        "transform",
+        `translate(${(nx * 4.8 * inf).toFixed(3)} ${(ny * 3.8 * inf).toFixed(3)})`,
+      );
+
+      if (dots) {
+        for (let i = 0; i < DOTS.length; i++) {
+          const [restX, restY] = DOTS[i];
+          const dx = restX - smoothed.x;
+          const dy = restY - smoothed.y;
+          const dist = Math.hypot(dx, dy);
+          const radius = 56;
+          let ox = 0;
+          let oy = 0;
+          if (inf > 0.01 && dist < radius && dist > 0.25) {
+            const falloff = 1 - dist / radius;
+            const mag = falloff * falloff * 9.5 * inf;
+            ox = (dx / dist) * mag;
+            oy = (dy / dist) * mag;
+          }
+          const current = dotOff[i];
+          current.x += (ox - current.x) * 0.16;
+          current.y += (oy - current.y) * 0.16;
+          if (ox === 0 && oy === 0 && Math.abs(current.x) < 0.03) {
+            current.x = 0;
+            current.y = 0;
+          }
+          (dots[i] as SVGElement).setAttribute(
+            "transform",
+            `translate(${current.x.toFixed(2)} ${current.y.toFixed(2)})`,
+          );
+        }
+      }
+
+      frame = window.requestAnimationFrame(tick);
+    };
+
+    frame = window.requestAnimationFrame(tick);
+
+    return () => {
+      running = false;
+      window.cancelAnimationFrame(frame);
+      root.removeEventListener("pointermove", onMove);
+      root.removeEventListener("pointerenter", onMove);
+      root.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
+
   return (
     <div
+      ref={rootRef}
       className="system-diagram"
       role="img"
-      aria-label="Illustrated control system: sensor input passes through PLC logic to an actuator with a feedback loop."
+      aria-label="Illustrated control system: sensor input passes through PLC logic to an actuator with a feedback loop, augmented by an intelligence module."
     >
       <div className="diagram-top">
         <span>
@@ -11,16 +152,8 @@ export default function SystemDiagram() {
         </span>
         <span>FIG. 01 / CLOSED LOOP</span>
       </div>
-      <svg viewBox="0 0 560 440" fill="none" aria-hidden="true">
+      <svg ref={svgRef} viewBox="0 0 560 440" fill="none" aria-hidden="true">
         <defs>
-          <pattern
-            id="grid"
-            width="24"
-            height="24"
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx="1" cy="1" r="0.8" fill="#c8c7bf" />
-          </pattern>
           <linearGradient
             id="unit"
             x1="210"
@@ -33,32 +166,41 @@ export default function SystemDiagram() {
             <stop offset="1" stopColor="#171e1b" />
           </linearGradient>
         </defs>
-        <rect width="560" height="440" fill="url(#grid)" />
-        <circle
-          cx="280"
-          cy="220"
-          r="161"
-          stroke="#d6d6cc"
-          strokeDasharray="3 6"
-        />
-        <circle cx="280" cy="220" r="124" stroke="#ddddd5" />
-        <path
-          d="M89 220H203M357 220H476M476 244V347H89V244"
-          stroke="#92988e"
-          strokeWidth="1.5"
-        />
-        <path
-          className="signal-line"
-          d="M89 220H203M357 220H476M476 244V347H89V244"
-          stroke="#e6693c"
-          strokeWidth="2"
-          strokeDasharray="7 160"
-        />
-        <path
-          d="m191 215 8 5-8 5m271-10 8 5-8 5m-186 122-8 5 8 5"
-          stroke="#e6693c"
-          strokeWidth="2"
-        />
+        <rect width="560" height="440" fill="#eeeee5" />
+        <g ref={dotsRef}>
+          {DOTS.map(([x, y]) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="0.8" fill="#c8c7bf" />
+          ))}
+        </g>
+        <g ref={ringsRef}>
+          <circle
+            cx="280"
+            cy="220"
+            r="161"
+            stroke="#d6d6cc"
+            strokeDasharray="3 6"
+          />
+          <circle cx="280" cy="220" r="124" stroke="#ddddd5" />
+        </g>
+        <g ref={flowRef}>
+          <path
+            d="M89 220H203M357 220H476M476 244V347H89V244"
+            stroke="#92988e"
+            strokeWidth="1.5"
+          />
+          <path
+            className="signal-line"
+            d="M89 220H203M357 220H476M476 244V347H89V244"
+            stroke="#F4B400"
+            strokeWidth="2"
+            strokeDasharray="7 160"
+          />
+          <path
+            d="m191 215 8 5-8 5m271-10 8 5-8 5m-186 122-8 5 8 5"
+            stroke="#F4B400"
+            strokeWidth="2"
+          />
+        </g>
         <rect
           x="55"
           y="188"
@@ -89,7 +231,16 @@ export default function SystemDiagram() {
           stroke="#465349"
           strokeWidth="1.5"
         />
-        <rect x="215" y="132" width="144" height="164" rx="13" fill="#c9c9bf" />
+        <g ref={rearRef}>
+          <rect
+            x="215"
+            y="132"
+            width="144"
+            height="164"
+            rx="13"
+            fill="#c9c9bf"
+          />
+        </g>
         <rect
           x="202"
           y="119"
@@ -134,6 +285,39 @@ export default function SystemDiagram() {
           PLC_01
         </text>
         <circle className="run-light" cx="320" cy="244" r="3" fill="#c9e7a8" />
+        <g ref={aiRef}>
+          <path d="M280 90V119" stroke="#92988e" strokeWidth="1.25" />
+          <path d="m276 111 4 8 4-8" stroke="#92988e" strokeWidth="1.25" />
+          <rect
+            x="241"
+            y="42"
+            width="78"
+            height="48"
+            rx="8"
+            fill="#f8f7f1"
+            stroke="#aeb2a7"
+          />
+          <rect x="241" y="42" width="3" height="48" rx="1.5" fill="#F4B400" />
+          <text
+            x="256"
+            y="62"
+            fill="#465349"
+            fontSize="11"
+            fontFamily="monospace"
+          >
+            AI_01
+          </text>
+          <text
+            x="254"
+            y="76"
+            fill="#657064"
+            fontSize="6.5"
+            fontFamily="monospace"
+            letterSpacing="0.8"
+          >
+            INTELLIGENCE
+          </text>
+        </g>
         <text x="55" y="276" fill="#657064" fontSize="9" fontFamily="monospace">
           01 / SENSE
         </text>

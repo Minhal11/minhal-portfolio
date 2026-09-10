@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import HeroHeadline from "./components/HeroHeadline";
 import SystemDiagram from "./components/SystemDiagram";
 
 const projects = [
@@ -38,13 +39,7 @@ export default function Home() {
             <span className="status-dot" /> ASPIRING AUTOMATION &
             INSTRUMENTATION ENGINEER
           </p>
-          <h1>
-            Making systems
-            <br />
-            smarter<span className="orange">.</span>
-            <br />
-            <span className="muted-heading">By design.</span>
-          </h1>
+          <HeroHeadline />
           <p className="hero-intro">
             Hi, I’m <strong>Minhal Rahman.</strong> I connect code, control, and
             hardware to turn engineering ideas into systems that work.
@@ -76,7 +71,7 @@ export default function Home() {
           <b>✳</b>
           <span>PROCESS AUTOMATION</span>
           <b>✳</b>
-          <span>EMBEDDED SYSTEMS</span>
+          <span>INDUSTRIAL CONTROL</span>
           <b>✳</b>
           <span>DIGITAL TWINS</span>
         </div>
@@ -84,7 +79,7 @@ export default function Home() {
       <section id="projects" className="work-section wrap">
         <div className="section-heading">
           <div>
-            <p className="eyebrow">01 / SELECTED WORK</p>
+            <p className="eyebrow">01 / PROJECTS</p>
             <h2>
               Ideas put into motion<span className="orange">.</span>
             </h2>
@@ -157,29 +152,32 @@ export default function Home() {
               I approach problems — understand the process, design the logic,
               and bring it to life through hardware and software.
             </p>
+            <h3 className="about-subhead">My journey into engineering</h3>
             <p>
-              From simulating warehouse automation to building a liquid-mixing
-              prototype, I’m developing practical experience in industrial
-              control systems, process automation, and embedded engineering.
+              When teachers asked what I wanted to become, I always said “an
+              engineer.” I never really knew what kind of engineer I wanted to
+              be. I just knew I wanted to become one.
             </p>
-            <div className="focus-grid">
-              <div>
-                <span>01</span>
-                <h3>Industrial automation</h3>
-                <p>
-                  PLC programming, sequencing, interlocks, and OPC UA
-                  communication.
-                </p>
-              </div>
-              <div>
-                <span>02</span>
-                <h3>Embedded & control</h3>
-                <p>
-                  ESP32, sensor integration, LabVIEW, and feedback-driven
-                  processes.
-                </p>
-              </div>
-            </div>
+            <p>
+              As I grew older, I started discovering what engineering actually
+              meant. After exploring different fields, I found my way into
+              Electronics & Instrumentation. That’s where I began to understand
+              the world of measurement, control, and industrial automation —
+              and somewhere along the way, it became more than just a degree. It
+              became something I genuinely wanted to keep learning.
+            </p>
+            <p>
+              Today, I’m continuing that journey through projects, self-learning,
+              and hands-on experimentation. I’m especially interested in the
+              intersection of industrial automation and emerging technologies
+              like AI, and how they can come together to build smarter systems.
+            </p>
+            <h3 className="about-subhead">Where I’m going</h3>
+            <p>
+              I don’t have every step of the next ten years mapped out. What I
+              do know is that I want to keep moving toward harder systems,
+              deeper engineering, and smarter ways of building them.
+            </p>
           </div>
         </div>
       </section>
